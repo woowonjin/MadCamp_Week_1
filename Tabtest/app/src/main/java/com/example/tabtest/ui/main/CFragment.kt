@@ -16,6 +16,4 @@ class CFragment : Fragment() {
         textView.text = "Frees"
         return root
     }
-
-
 }
