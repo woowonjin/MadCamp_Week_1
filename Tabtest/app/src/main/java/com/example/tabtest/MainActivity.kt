@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         val viewPager: ViewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter // viewpager adapter 설정
         val tabs: TabLayout = findViewById(R.id.tabs)
-        tabs.setupWithViewPager(viewPager) //view pager와 tab layout 연결
+        tabs.setupWithViewPager(viewPager) // pager와 tab layout 연결
 
     }
 }

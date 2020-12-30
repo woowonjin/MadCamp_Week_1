@@ -8,6 +8,11 @@
     tools:context=".ui.main.PlaceholderFragment"
     tools:ignore="MissingDefaultResource">
 
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
     <ImageButton
         android:id="@+id/add_btn"
         android:layout_width="70dp"
