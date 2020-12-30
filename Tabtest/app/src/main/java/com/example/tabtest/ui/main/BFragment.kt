@@ -26,6 +26,7 @@ import com.gun0912.tedpermission.TedPermission
 class BFragment : Fragment() {
     private val OPEN_GALLERY = 1
     private var imageTest : ImageView? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_b, container, false)
 //        val textView: TextView = root.findViewById(R.id.section_label)
