@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.tabtest.R
 import android.content.Context
+import android.net.Uri
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -45,6 +46,17 @@ class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(){
                 userPay.visibility =
                     if (contactModel.phoneNumbers.isEmpty()) View.GONE else View.VISIBLE
                 userPay.text = composePhoneNumbersText(contactModel.phoneNumbers)
+
+                //val resourceId = context.resources.getIdentifier(contactModel.photoUri)
+
+                 if (contactModel.photoUri.isNullOrEmpty()) {
+                        userPhoto.setImageResource(R.mipmap.ic_launcher_round)
+                    } else {
+                     userPhoto.visibility = View.VISIBLE
+                     userPhoto.setImageURI(Uri.parse(contactModel.photoUri))
+                 }
+
+
             }
 
             private fun composePhoneNumbersText(phoneNumbers: Set<String>): String =

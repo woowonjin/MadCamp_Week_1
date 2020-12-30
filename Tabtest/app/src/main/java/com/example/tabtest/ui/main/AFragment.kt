@@ -22,7 +22,7 @@ import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import androidx.core.content.ContextCompat
 import android.util.Log
-
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 
 class AFragment : Fragment() {
@@ -34,6 +34,7 @@ class AFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_a, container, false)
         val textView: TextView = root.findViewById(R.id.section_label)
+        val swipeRefreshLayout: SwipeRefreshLayout = root.findViewById(R.id.srl_main)
 
 //        var userList = arrayListOf<DataVo>(
 //                DataVo("박해철","tesdid","카이스트","10000","user_img_01"),
@@ -62,6 +63,35 @@ class AFragment : Fragment() {
         } else {
             loadContacts()
         }
+
+
+        swipeRefreshLayout.setOnRefreshListener {
+            contactsHelper = ContactsHelper(requireContext().contentResolver)
+
+            val recyler_view: RecyclerView = root.findViewById(R.id.recycler_view)
+            recyler_view.adapter = mAdapter
+
+            val layout = LinearLayoutManager(requireContext())
+            recyler_view.layoutManager = layout
+            //recyler_view.setHasFixedSize(true)
+
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_CONTACTS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(Manifest.permission.READ_CONTACTS),
+                    PERMISSION_READ_CONTACTS
+                )
+            } else {
+                loadContacts()
+            }
+            swipeRefreshLayout.isRefreshing = false
+        }
+        Log.d("check", "here")
+//        swipeRefreshLayout.isRefreshing = false
         return root
     }
 
