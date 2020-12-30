@@ -15,6 +15,5 @@ class CFragment : Fragment() {
         val textView: TextView = root.findViewById(R.id.section_label)
         textView.text = "Frees"
         return root
-        //asdasdsaasd
     }
 }
