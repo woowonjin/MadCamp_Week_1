@@ -10,46 +10,73 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.tabtest.R
 import android.content.Context
+import android.net.Uri
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 
-class CustomAdapter (private val context: Context, private val dataList: ArrayList<DataVo>):
-        RecyclerView.Adapter<CustomAdapter.ItemViewHolder>(){
-        inner class ItemViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(){
+    private var items: List<ContactModel> = emptyList()
+
+    fun bindItem(items: List<ContactModel>){
+        this.items = items
+        notifyDataSetChanged()
+    }
+
+        inner class ContactsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
             private val userPhoto = itemView.findViewById<ImageView>(R.id.userimg)
             private val userName = itemView.findViewById<TextView>(R.id.userNameTxt)
             private val userPay = itemView.findViewById<TextView>(R.id.payTxt)
             private val userAddress: TextView = itemView.findViewById<TextView>(R.id.addressTxt)
 
-            fun bind(dataVo: DataVo, context: Context) {
-                if(dataVo.photo != ""){
-                val resourceId = context.resources.getIdentifier(dataVo.photo, "drawble", context.packageName)
+            fun bindItem(contactModel: ContactModel) {
+//                if(contactModel.photoUri!= ""){
+//                val resourceId = context.resources.getIdentifier(contactModel.photoUri, "drawble", context.packageName)
+//
+//                    if (resourceId > 0) {
+//                        userPhoto.setImageResource(resourceId)
+//                    } else {
+//                        userPhoto.setImageResource(R.mipmap.ic_launcher_round)
+//                    }
+//                } else {
+//                        userPhoto.setImageResource(R.mipmap.ic_launcher_round)
+//                }
 
-                if (resourceId > 0) {
-                    userPhoto.setImageResource(resourceId)
-                } else {
-                    userPhoto.setImageResource(R.mipmap.ic_launcher_round)
-                }
-            } else {
-                    userPhoto.setImageResource(R.mipmap.ic_launcher_round)
-                }
+                userName.text = contactModel.fullName
 
-                userName.text = dataVo.name
-                userPay.text = dataVo.pay.toString()
-                userAddress.text = dataVo.address
-                }
+                userPay.visibility =
+                    if (contactModel.phoneNumbers.isEmpty()) View.GONE else View.VISIBLE
+                userPay.text = composePhoneNumbersText(contactModel.phoneNumbers)
+
+                //val resourceId = context.resources.getIdentifier(contactModel.photoUri)
+
+                 if (contactModel.photoUri.isNullOrEmpty()) {
+                        userPhoto.setImageResource(R.mipmap.ic_launcher_round)
+                    } else {
+                     userPhoto.visibility = View.VISIBLE
+                     userPhoto.setImageURI(Uri.parse(contactModel.photoUri))
+                 }
+
+
             }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.view_item_layout, parent, false)
-        return ItemViewHolder(view)
+            private fun composePhoneNumbersText(phoneNumbers: Set<String>): String =
+                phoneNumbers.joinToString(separator = "\n")
+
+
+//                userPay.text = dataVo.pay.toString()
+//                userAddress.text = dataVo.address
+        }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.view_item_layout, parent, false)
+        return ContactsViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.bind(dataList[position], context)
+    override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
+        holder.bindItem(items[position])
     }
 
     override fun getItemCount(): Int {
-        return dataList.size
+        return items.size
     }
-        }
+}
