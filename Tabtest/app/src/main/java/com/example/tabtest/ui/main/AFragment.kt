@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.tabtest.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 
 class AFragment : Fragment() {
 
@@ -14,6 +17,18 @@ class AFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_a, container, false)
         val textView: TextView = root.findViewById(R.id.section_label)
         textView.text = "Contacts"
+        var userList = arrayListOf<DataVo>(
+                DataVo("박해철","tesdid","카이스트",10000,"user_img_01"),
+                DataVo("박해철","tesdid","카이스트",10000,"user_img_01")
+        )
+
+        val mAdapter=CustomAdapter(requireContext(), userList)
+        val recyler_view: RecyclerView = root.findViewById(R.id.recycler_view)
+        recyler_view.adapter = mAdapter
+
+        val layout = LinearLayoutManager(requireContext())
+        recyler_view.layoutManager=layout
+        recyler_view.setHasFixedSize(true)
         return root
     }
 
