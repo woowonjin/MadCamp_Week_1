@@ -13,7 +13,7 @@ class BFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_b, container, false)
         val textView: TextView = root.findViewById(R.id.section_label)
-        textView.text = "B"
+        textView.text = "Images"
         return root
     }
 
