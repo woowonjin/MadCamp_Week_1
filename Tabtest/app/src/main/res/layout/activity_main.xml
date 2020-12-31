@@ -37,8 +37,10 @@
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="#8b00ff"
         android:layout_gravity="bottom"
+        app:tabTextColor="@color/white"
+        app:tabSelectedTextColor="#FFFF00"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_alignParentBottom = "true"/>
 
