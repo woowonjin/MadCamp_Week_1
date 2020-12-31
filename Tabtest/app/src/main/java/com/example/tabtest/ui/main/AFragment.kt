@@ -1,40 +1,47 @@
 package com.example.tabtest.ui.main
 
-import android.app.Activity
-import android.content.Context
+import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
+import android.view.inputmethod.EditorInfo
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.tabtest.R
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
-import androidx.lifecycle.Observer
-import android.Manifest
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.tabtest.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
-import androidx.core.content.ContextCompat
-import android.util.Log
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 
 
-class AFragment : Fragment() {
+class AFragment : Fragment(), SearchView.OnQueryTextListener {
     private lateinit var contactsHelper: ContactsHelper
     private var disposable = Disposables.empty()
     private val mAdapter = CustomAdapter()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+
         val root = inflater.inflate(R.layout.fragment_a, container, false)
         val textView: TextView = root.findViewById(R.id.section_label)
         val swipeRefreshLayout: SwipeRefreshLayout = root.findViewById(R.id.srl_main)
+
+        val searchView: SearchView = root.findViewById(R.id.searchV)
+        searchView.setOnQueryTextListener(this)
+        Log.d("check", "search")
+
+
 
 //        var userList = arrayListOf<DataVo>(
 //                DataVo("박해철","tesdid","카이스트","10000","user_img_01"),
@@ -101,7 +108,7 @@ class AFragment : Fragment() {
         disposable = contactsHelper.getAllContacts().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mAdapter.bindItem(it.values.toList())
+                mAdapter.bindItem(it.values.toList() as MutableList<ContactModel>)
             }, { Log.e("ContactHelper", it.message, it) })
     }
 
@@ -129,6 +136,47 @@ class AFragment : Fragment() {
     companion object {
         private const val PERMISSION_READ_CONTACTS = 1
     }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        //Log.d("Text", "text is " + newText!!)
+        search(newText)
+
+        return false
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        Log.d("Text", "text is " + query!!)
+        search(query)
+        return false
+    }
+
+    private fun search(s: String?) {
+        mAdapter.search(s) {
+            // update UI on nothing found
+            Toast.makeText(context, "Nothing Found", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        setHasOptionsMenu(true)
+//        super.onCreate(savedInstanceState)
+//
+//    }
+
+//    val searchView: SearchView = searchItem.getActionView() as SearchView
+//    searchView.setImeOptions(EditorInfo.IME_ACTION_DONE)
+//    searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//        override fun onQueryTextSubmit(query: String?): Boolean {
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                mAdapter.getFilter()?.filter(newText)
+//                return false
+//            }
+//        })
+
+
 }
 
 
