@@ -13,10 +13,10 @@ import com.example.tabtest.R
 import android.widget.Filterable
 
 class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Filterable{
-    private var items = mutableListOf<ContactModel>()
+    private var items: List<ContactModel> = emptyList()
     private var searchList = mutableListOf<ContactModel>()
 
-    fun bindItem(items: MutableList<ContactModel>){
+    fun bindItem(items: List<ContactModel>){
         this.items = items
         this.searchList = ArrayList(items)
         for(s in searchList){

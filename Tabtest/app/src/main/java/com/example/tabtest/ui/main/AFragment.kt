@@ -108,7 +108,7 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener {
         disposable = contactsHelper.getAllContacts().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                mAdapter.bindItem(it.values.toList() as MutableList<ContactModel>)
+                mAdapter.bindItem(it.values.toList()) //as MutableList<ContactModel>)
             }, { Log.e("ContactHelper", it.message, it) })
     }
 
