@@ -1,25 +1,27 @@
 package com.example.tabtest.ui.main
 
-import android.os.Bundle
+import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.example.tabtest.R
-import android.content.Context
-import android.net.Uri
-import android.util.Log
+import android.widget.Filter
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tabtest.R
+import android.widget.Filterable
 
-class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(){
+class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Filterable{
     private var items: List<ContactModel> = emptyList()
+    private var searchList = mutableListOf<ContactModel>()
 
     fun bindItem(items: List<ContactModel>){
         this.items = items
+        this.searchList = ArrayList(items)
+        for(s in searchList){
+            Log.d("list", "element : " + s)
+        }
         notifyDataSetChanged()
     }
 
@@ -80,4 +82,116 @@ class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(){
     override fun getItemCount(): Int {
         return items.size
     }
+
+
+    private val originalList = ArrayList(items)
+    // a method-body to invoke when search returns nothing. It can be null.
+    private var onNothingFound: (() -> Unit)? = null
+
+    /**
+     * Searches a specific item in the list and updates adapter.
+     * if the search returns empty then onNothingFound callback is invoked if provided which can be used to update UI
+     * @param s the search query or text. It can be null.
+     * @param onNothingFound a method-body to invoke when search returns nothing. It can be null.
+     */
+    fun search(s: String?, onNothingFound: (() -> Unit)?) {
+        this.onNothingFound = onNothingFound
+        filter.filter(s)
+
+    }
+
+
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(charSequence: CharSequence): FilterResults {
+                val charString = charSequence.toString()
+                if (charString.isEmpty()) {
+                    items = searchList
+                } else {
+                    val filteredList = ArrayList<ContactModel>()
+                    //이부분에서 원하는 데이터를 검색할 수 있음
+                    for (row in searchList) {
+                        if (  !row.fullName.isNullOrEmpty() && row.fullName.toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(row)
+                        }
+                    }
+                    items = filteredList
+                }
+                val filterResults = FilterResults()
+                filterResults.values = items
+                return filterResults
+            }
+            override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
+                items = filterResults.values as ArrayList<ContactModel>
+                notifyDataSetChanged()
+            }
+        }
+    }
+
+
+
+//    override fun getFilter(): Filter {
+//        return object : Filter() {
+//            private val filterResults = FilterResults()
+//            override fun performFiltering(constraint: CharSequence?): FilterResults {
+//                items.clear()
+//                if (constraint.isNullOrBlank()) {
+//                    items.addAll(originalList)
+//                } else {
+//                    val searchResults = originalList.filter { it.getSearchCriteria().contains(constraint) }
+//                    items.addAll(searchResults)
+//                }
+//                return filterResults.also {
+//                    it.values = items
+//                }
+//            }
+//
+//            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+//                // no need to use "results" filtered list provided by this method.
+//                if (items.isNullOrEmpty())
+//                    onNothingFound?.invoke()
+//                notifyDataSetChanged()
+//
+//            }
+//        }
+//    }
+//
+//    interface Searchable {
+//        /** This method will allow to specify a search string to compare against
+//        your search this can be anything depending on your use case.
+//         */
+//        fun getSearchCriteria(): String
+//    }
+
+//    fun getFilter(): Filter? {
+//        return exampleFilter
+//    }
+//
+//    private val exampleFilter: Filter = object : Filter() {
+//        override fun performFiltering(constraint: CharSequence?): FilterResults? {
+//            val filteredList: MutableList<ContactModel> = ArrayList()
+//            if (constraint == null || constraint.length == 0) {
+//                filteredList.addAll(searchList)
+//            } else {
+//                val filterPattern = constraint.toString().toLowerCase().trim { it <= ' ' }
+//                for (item in searchList) {
+//                    if ( !item.fullName.isNullOrEmpty() && item.fullName.toLowerCase().contains(filterPattern)) {
+//                        filteredList.add(item)
+//                    }
+//                }
+//            }
+//            val results = FilterResults()
+//            results.values = filteredList
+//            return results
+//        }
+//
+//        override fun publishResults(constraint: CharSequence?, results: FilterResults) {
+//            searchList.clear()
+//            searchList.addAll(results.values as List<ContactModel>)
+//            notifyDataSetChanged()
+//        }
+//    }
+
+
 }
