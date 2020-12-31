@@ -31,59 +31,21 @@ import com.gun0912.tedpermission.TedPermission
 class BFragment : Fragment() {
     private val OPEN_GALLERY = 1
     var imageList : ArrayList<GridItem> = ArrayList<GridItem>()
-    var mInflater : LayoutInflater? = null
-    var mContainer : ViewGroup? = null
+    private val mAdapter = GridRecyclerAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.fragment_b, container, false)
-//        val swipeRefreshLayout: SwipeRefreshLayout = root.findViewById(R.id.srl_main)
-        mInflater = inflater
-        mContainer = container
-        //testCode
-        val mAdapter = GridRecyclerAdapter(requireContext(), imageList)
-        if(mAdapter == null){
-            Log.d("Error", "mAdapter is null")
+        val view = layoutInflater.inflate(R.layout.fragment_b, container, false)
+        view.findViewById<RecyclerView>(R.id.recycler_view_grid).apply{
+            this.adapter = mAdapter
+            layoutManager = GridLayoutManager(context,3)
         }
-        else{
-            Log.d("Success", "mAdapter is ok")
-        }
-        val recylerView: RecyclerView = root.findViewById(R.id.recycler_view_grid)
-        recylerView.adapter = mAdapter
-        val gridLayoutManager = GridLayoutManager(requireContext(), 3)
-        gridLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        recylerView.layoutManager = gridLayoutManager
-        Log.d("Create", "OnCreate")
-        var button: ImageButton = root.findViewById(R.id.add_btn)
+        val button: ImageButton = view.findViewById(R.id.add_btn)
         button.setOnClickListener {
             openGallery()
         }
-
-        return root
+        return view
     }
 
-    override fun onResume() {
-        super.onResume()
-        val root = mInflater?.inflate(R.layout.fragment_b, mContainer, false)
-//        val swipeRefreshLayout: SwipeRefreshLayout = root.findViewById(R.id.srl_main)
-        if(root != null) {
-            val mAdapter = GridRecyclerAdapter(requireContext(), imageList)
-            val recylerView: RecyclerView = root.findViewById(R.id.recycler_view_grid)
-            if(recylerView == null){
-                Log.d("Error", "recyclerView is null")
-            }
-            recylerView.adapter = mAdapter
-            val gridLayoutManager = GridLayoutManager(requireContext(), 3)
-            gridLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-            recylerView.layoutManager = gridLayoutManager
-            for(s in imageList){
-                Log.d("img", "image is " + s)
-            }
-            Log.d("Resume", "Refresh")
-        }
-        else{
-            Log.d("Error", "Root is null !!")
-        }
-    }
 
     private fun openGallery(){
         val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -110,13 +72,19 @@ class BFragment : Fragment() {
 
                         }
                     }
-                    imageList.add(GridItem(imageList.size, bitmap))
-                    Log.d("Success", "Photo Success")
+                    Log.d("Success", "Add Image Success")
+                    mAdapter.addItem(GridItem(mAdapter.itemCount, bitmap))
                 }
                 else{
                     Log.d("Error", "Something Wrong")
                 }
             }
+            else{
+                Log.d("Error", "Something Wrong")
+            }
+        }
+        else{
+            Log.d("Error", "Something Wrong")
         }
     }
 

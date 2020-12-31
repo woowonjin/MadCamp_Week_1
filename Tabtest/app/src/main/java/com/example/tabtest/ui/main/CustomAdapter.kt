@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.tabtest.R
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 
