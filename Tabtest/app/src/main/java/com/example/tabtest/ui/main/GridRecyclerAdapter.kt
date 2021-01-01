@@ -12,7 +12,7 @@ import com.example.tabtest.R
 
 class GridRecyclerAdapter : RecyclerView.Adapter<GridRecyclerAdapter.ItemViewHolder>() {
 
-    private var dataList = ArrayList<GridItem>()
+    var dataList = ArrayList<GridItem>()
 
     var mPosition = 0
 
