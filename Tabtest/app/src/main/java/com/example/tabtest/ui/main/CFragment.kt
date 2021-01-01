@@ -29,10 +29,10 @@ import retrofit2.http.Query
 val num_of_rows = 10
 val page_no = 1
 val data_type = "JSON"
-val base_time = "1110"
-val base_data = 20210101
-val nx = "55"
-val ny = "127"
+val base_time = "1800"
+val base_data = "20210101"
+val nx = "56"
+val ny = "125"
 
 data class WEATHER (
         val response : RESPONSE
@@ -53,21 +53,21 @@ data class ITEMS(
         val item : List<ITEM>
 )
 data class ITEM(
-        val baseDate : Int,
-        val baseTime : Int,
+        val baseDate : String,
+        val baseTime : String,
         val category : String,
-        val fcstDate : Int,
-        val fcstTime : Int,
-        val fcstValue: String
+        val nx : String,
+        val ny : String,
+        val obsrValue: String
 )
 
 interface WeatherInterface {
-    @GET("getVilageFcst?serviceKey=zJI20aUR59nMTl5ApsYTsvuvZAWgThqp745YEiuqUfReu9PD9M7PDvC12UF1ha8uZPNwV75JuwB4mfhUSKOL9A%3D%3D")
+    @GET("getUltraSrtNcst?serviceKey=zJI20aUR59nMTl5ApsYTsvuvZAWgThqp745YEiuqUfReu9PD9M7PDvC12UF1ha8uZPNwV75JuwB4mfhUSKOL9A%3D%3D")
     fun GetWeather(
             @Query("dataType") data_type : String,
             @Query("numOfRows") num_of_rows : Int,
             @Query("pageNo") page_no : Int,
-            @Query("base_date") base_date : Int,
+            @Query("base_date") base_date : String,
             @Query("base_time") base_time : String,
             @Query("nx") nx : String,
             @Query("ny") ny : String
@@ -95,20 +95,26 @@ class CFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_c, container, false)
         val textView: TextView = root.findViewById(R.id.section_label)
         textView.text = "Frees"
-
         val call = ApiObject.retrofitService.GetWeather(data_type, num_of_rows, page_no, base_data, base_time, nx, ny)
         call.enqueue(object : retrofit2.Callback<WEATHER>{
             override fun onResponse(call: Call<WEATHER>, response: Response<WEATHER>) {
                 if (response.isSuccessful){
                     Log.d("api", response.body().toString())
+                    val tmp: LatXLngY? = convertGRID_GPS(TO_GRID, 36.3741555, 127.3658293)
+                    Log.d("grid", tmp!!.x.toString())
+                    Log.d("grid", tmp!!.y.toString())
 //                    Log.d("api", response.body()!!.response.body.items.item.toString())
 //                    Log.d("api", response.body()!!.response.body.items.item[0].category)
+
                 }
             }
             override fun onFailure(call: Call<WEATHER>, t: Throwable) {
                 //Log.d("api fail : ", t.message)
             }
         })
+
+
+
 
         return root
     }
