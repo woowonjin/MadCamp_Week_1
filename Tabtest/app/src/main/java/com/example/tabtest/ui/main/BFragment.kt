@@ -32,7 +32,7 @@ class BFragment : Fragment() {
     private val OPEN_GALLERY = 1
     var imageList : ArrayList<GridItem> = ArrayList<GridItem>()
     private val mAdapter = GridRecyclerAdapter()
-
+    var isIn = false
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = layoutInflater.inflate(R.layout.fragment_b, container, false)
         view.findViewById<RecyclerView>(R.id.recycler_view_grid).apply{
@@ -73,7 +73,17 @@ class BFragment : Fragment() {
                         }
                     }
                     Log.d("Success", "Add Image Success")
-                    mAdapter.addItem(GridItem(mAdapter.itemCount, bitmap))
+//                    mAdapter.addItem(GridItem(mAdapter.itemCount, bitmap))
+                    isIn = false
+                    for(s in mAdapter.dataList){
+                        if(s.data == data?.data){
+                            isIn = true
+                            break
+                        }
+                    }
+                    if(!isIn) {
+                        mAdapter.addItem(GridItem(mAdapter.itemCount, bitmap, data?.data))
+                    }
                 }
                 else{
                     Log.d("Error", "Something Wrong")

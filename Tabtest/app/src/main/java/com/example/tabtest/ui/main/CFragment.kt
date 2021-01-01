@@ -1,20 +1,33 @@
 package com.example.tabtest.ui.main
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Context.LOCATION_SERVICE
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.tabtest.MainActivity
 import com.example.tabtest.R
+import com.google.android.gms.maps.model.LatLng
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
@@ -25,12 +38,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
+var lat : String = ""
+var lng : String = ""
 val num_of_rows = 10
 val page_no = 1
 val data_type = "JSON"
-val base_time = "1800"
-val base_data = "20210101"
+var base_time = "1800"
+var base_data = "20210101"
 val nx = "56"
 val ny = "125"
 
@@ -90,11 +110,15 @@ object ApiObject {
 
 
 class CFragment : Fragment() {
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formatter = DateTimeFormatter.ofPattern("yyyyMMdd,HHmm")
 
+    @SuppressLint("MissingPermission")
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_c, container, false)
-        val textView: TextView = root.findViewById(R.id.section_label)
-        textView.text = "Frees"
+        getCurrentDate()
+        getCurrentPosition()
         val call = ApiObject.retrofitService.GetWeather(data_type, num_of_rows, page_no, base_data, base_time, nx, ny)
         call.enqueue(object : retrofit2.Callback<WEATHER>{
             override fun onResponse(call: Call<WEATHER>, response: Response<WEATHER>) {
@@ -113,9 +137,27 @@ class CFragment : Fragment() {
             }
         })
 
-
-
-
         return root
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getCurrentDate(){
+        var dateAndtime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+        var current = dateAndtime.format(formatter)
+        current = current.toString()
+        val result = current.split(",")
+        val currentDate = result[0]
+        val currentTime = result[1]
+        base_data = currentDate
+        base_time = currentTime
+    }
+
+    fun getCurrentPosition(){
+        val act = activity as MainActivity
+        lat = act.getLat()
+        lng = act.getLng()
+        println("Latitude : $lat")
+        println("Longtitude : $lng")
+    }
+
 }
