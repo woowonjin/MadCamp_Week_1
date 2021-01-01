@@ -20,6 +20,8 @@ import io.reactivex.schedulers.Schedulers
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.AdapterView
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 
@@ -38,8 +40,13 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener {
         val swipeRefreshLayout: SwipeRefreshLayout = root.findViewById(R.id.srl_main)
 
         val searchView: SearchView = root.findViewById(R.id.searchV)
+        //val button: Button = root.findViewById(R.id.button)
         searchView.setOnQueryTextListener(this)
         Log.d("check", "search")
+
+//        button.setOnClickListener{
+//            onClick()
+//        }
 
 
 
@@ -156,6 +163,21 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener {
             Toast.makeText(context, "Nothing Found", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun onClick(){
+        Log.d("Text", "click")
+    }
+
+
+
+//    override fun onBackPressed() {
+//        // close search view on back button pressed
+//        if (!searchView!!.isIconified) {
+//            searchView!!.isIconified = true
+//            return
+//        }
+//        super.onBackPressed()
+//    }
 
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        setHasOptionsMenu(true)

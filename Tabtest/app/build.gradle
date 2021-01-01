@@ -55,4 +55,7 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     implementation "gun0912.ted:tedpermission:2.1.0"
+
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.0' // Object <--> json
+    implementation 'com.squareup.retrofit2:retrofit:2.8.0' //
 }
