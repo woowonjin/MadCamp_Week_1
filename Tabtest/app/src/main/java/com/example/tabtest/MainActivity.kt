@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
     override fun onLocationChanged(location: Location) {
         Latitude = location.latitude.toString()
         Longtitude = location.longitude.toString()
-        println("Latitude: " + location.latitude + " , Longitude: " + location.longitude)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
