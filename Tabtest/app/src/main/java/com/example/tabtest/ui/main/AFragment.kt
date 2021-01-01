@@ -23,6 +23,7 @@ import android.view.MenuItem
 import android.widget.AdapterView
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.view.menu.MenuView
 import androidx.appcompat.widget.SearchView
 
 
@@ -32,12 +33,18 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener {
     private val mAdapter = CustomAdapter()
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
 
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val root = inflater.inflate(R.layout.fragment_a, container, false)
         val textView: TextView = root.findViewById(R.id.section_label)
         val swipeRefreshLayout: SwipeRefreshLayout = root.findViewById(R.id.srl_main)
+
 
         val searchView: SearchView = root.findViewById(R.id.searchV)
         //val button: Button = root.findViewById(R.id.button)
