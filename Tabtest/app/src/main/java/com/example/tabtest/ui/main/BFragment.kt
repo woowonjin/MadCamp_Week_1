@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -116,6 +117,7 @@ class BFragment : Fragment(), FragmentLifecycle, CellClickListner {
         mDialog.show(requireFragmentManager(), "PHOTO")
         mDialog.PhotoPosition = currentposition
         mDialog.PhotoArray = photolist
+
 
 //        println(photoposition)
 //        val intent = Intent(requireContext(), PhotoView::class.java)

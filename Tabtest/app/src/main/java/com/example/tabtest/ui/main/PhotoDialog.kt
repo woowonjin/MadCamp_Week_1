@@ -95,6 +95,13 @@ class PhotoDialog : DialogFragment() {
         return super.onCreateDialog(savedInstanceState)
     }
 
+    override fun onResume() {
+
+        requireDialog().window?.setLayout(1000,1000)
+        super.onResume()
+
+    }
+
 
 //    // TODO: Rename and change types of parameters
 //    private var param1: String? = null
