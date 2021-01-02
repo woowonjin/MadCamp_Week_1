@@ -9,38 +9,64 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import com.example.tabtest.ui.main.FragmentLifecycle
 import com.example.tabtest.ui.main.SectionsPagerAdapter
 import com.google.android.material.tabs.TabLayout
-import com.gun0912.tedpermission.PermissionListener
-import com.gun0912.tedpermission.TedPermission
+
+
 
 class MainActivity : AppCompatActivity(), LocationListener {
     lateinit var locationManager: LocationManager
     private val locationPermissionCode = 2
     var Latitude = String()
     var Longtitude = String()
+    private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
+
+
+    private val pageChangeListener: OnPageChangeListener= object : OnPageChangeListener {
+        var currentPosition = 0
+        override fun onPageSelected(newPosition: Int) {
+            val fragmentToHide: FragmentLifecycle = sectionsPagerAdapter.getItem(currentPosition) as FragmentLifecycle
+            fragmentToHide.onPauseFragment()
+            val fragmentToShow: FragmentLifecycle = sectionsPagerAdapter.getItem(newPosition) as FragmentLifecycle
+            fragmentToShow.onResumeFragment()
+            currentPosition = newPosition
+        }
+
+        override fun onPageScrolled(arg0: Int, arg1: Float, arg2: Int) {}
+        override fun onPageScrollStateChanged(arg0: Int) {}
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getLocation()
         setContentView(R.layout.activity_main) // activity main view 확인
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+        //val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+        sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter // viewpager adapter 설정
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager) // pager와 tab layout 연결
 
+        viewPager.setOnPageChangeListener(pageChangeListener)
+
     }
 
-    override fun onResume(){
-        super.onResume()
-        getLocation()
-    }
 
-    private fun getLocation() {
+
+
+//    override fun onResume(){
+//        super.onResume()
+//        getLocation()
+//    }
+
+    public fun getLocation() {
+        println("Get Location")
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)

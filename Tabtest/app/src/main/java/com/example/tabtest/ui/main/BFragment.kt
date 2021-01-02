@@ -27,8 +27,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import io.reactivex.disposables.Disposables
 
-class BFragment : Fragment() {
+class BFragment : Fragment(), FragmentLifecycle {
     private val OPEN_GALLERY = 1
     var imageList : ArrayList<GridItem> = ArrayList<GridItem>()
     private val mAdapter = GridRecyclerAdapter()
@@ -96,6 +97,17 @@ class BFragment : Fragment() {
         else{
             Log.d("Error", "Something Wrong")
         }
+    }
+
+
+    override fun onPauseFragment() {
+        Log.d("tab","pauseB")
+        this.onDestroyView()
+    }
+
+    override fun onResumeFragment() {
+        Log.d("tab","resumeB")
+        this.onResume()
     }
 
 

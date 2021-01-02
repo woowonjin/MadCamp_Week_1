@@ -4,39 +4,34 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.view.*
-import android.view.inputmethod.EditorInfo
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.viewpager.widget.ViewPager
 import com.example.tabtest.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.widget.AdapterView
-import android.widget.Button
-import android.widget.Toast
-import androidx.appcompat.view.menu.MenuView
-import androidx.appcompat.widget.SearchView
 
 
-class AFragment : Fragment(), SearchView.OnQueryTextListener {
+class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle {
     private lateinit var contactsHelper: ContactsHelper
     private var disposable = Disposables.empty()
     private val mAdapter = CustomAdapter()
 
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        inflater.inflate(R.menu.main_menu, menu)
+//        super.onCreateOptionsMenu(menu, inflater)
+//    }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -50,6 +45,13 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener {
         //val button: Button = root.findViewById(R.id.button)
         searchView.setOnQueryTextListener(this)
         Log.d("check", "search")
+
+        val frame: View = requireActivity().findViewById(R.id.frame)
+        frame.setOnClickListener(object: View.OnClickListener{
+            override fun onClick(v: View?) {
+                Log.d("frame","touch")
+            }
+        })
 
 //        button.setOnClickListener{
 //            onClick()
@@ -175,6 +177,15 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener {
         Log.d("Text", "click")
     }
 
+    override fun onPauseFragment() {
+        Log.d("tab","pauseA")
+        this.onDestroyView()
+    }
+
+    override fun onResumeFragment() {
+        Log.d("tab","resumeA")
+        this.onResume()
+    }
 
 
 //    override fun onBackPressed() {
