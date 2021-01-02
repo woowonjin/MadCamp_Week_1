@@ -28,6 +28,7 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
     private var disposable = Disposables.empty()
     private val mAdapter = CustomAdapter()
 
+
 //    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 //        inflater.inflate(R.menu.main_menu, menu)
 //        super.onCreateOptionsMenu(menu, inflater)

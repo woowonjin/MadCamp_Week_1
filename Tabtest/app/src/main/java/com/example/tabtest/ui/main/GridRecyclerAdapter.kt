@@ -10,9 +10,9 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tabtest.R
 
-class GridRecyclerAdapter : RecyclerView.Adapter<GridRecyclerAdapter.ItemViewHolder>() {
+class GridRecyclerAdapter(private val cellClickListner: CellClickListner) : RecyclerView.Adapter<GridRecyclerAdapter.ItemViewHolder>() {
 
-    var dataList = ArrayList<GridItem>()
+    var dataList = ArrayList<GridItem>() // list of photo
 
     var mPosition = 0
 
@@ -21,7 +21,8 @@ class GridRecyclerAdapter : RecyclerView.Adapter<GridRecyclerAdapter.ItemViewHol
         val holder = ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.grid_image, parent, false))
         holder.itemView.setOnClickListener {
             setPosition(holder.adapterPosition)
-            Toast.makeText(parent.context, "${holder.adapterPosition} 아이템 클릭!", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(parent.context, "${holder.adapterPosition} 아이템 클릭!", Toast.LENGTH_SHORT).show()
+            cellClickListner.onCellClickListner(holder.adapterPosition, dataList)
 
         }
         return holder
@@ -34,6 +35,9 @@ class GridRecyclerAdapter : RecyclerView.Adapter<GridRecyclerAdapter.ItemViewHol
 
     override fun onBindViewHolder(holder: GridRecyclerAdapter.ItemViewHolder, position: Int) {
         holder.bind(dataList[position])
+//        holder.itemView.setOnClickListener {
+//            cellClickListner.onCellClickListner(this.getPosition())
+//        }
     }
 
     fun getPosition():Int{
@@ -66,6 +70,9 @@ class GridRecyclerAdapter : RecyclerView.Adapter<GridRecyclerAdapter.ItemViewHol
 //                notifyDataSetChanged()
             Log.d("Success", "Success to find Image view")
         }
+
+
+
     }
 
 }

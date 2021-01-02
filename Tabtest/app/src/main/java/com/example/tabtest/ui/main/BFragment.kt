@@ -1,11 +1,8 @@
 package com.example.tabtest.ui.main
 
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -15,24 +12,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.fragment.app.Fragment
-import com.example.tabtest.R
+import android.widget.ImageButton
+import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.gun0912.tedpermission.PermissionListener
-import com.gun0912.tedpermission.TedPermission
-import io.reactivex.disposables.Disposables
+import com.example.tabtest.R
 
-class BFragment : Fragment(), FragmentLifecycle {
+//public var photoposition = 0
+//public var photoArray = ArrayList<GridItem>()
+
+class BFragment : Fragment(), FragmentLifecycle, CellClickListner {
+
     private val OPEN_GALLERY = 1
     var imageList : ArrayList<GridItem> = ArrayList<GridItem>()
-    private val mAdapter = GridRecyclerAdapter()
+    private val mAdapter = GridRecyclerAdapter(this)
     var isIn = false
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = layoutInflater.inflate(R.layout.fragment_b, container, false)
@@ -83,7 +80,7 @@ class BFragment : Fragment(), FragmentLifecycle {
                         }
                     }
                     if(!isIn) {
-                        mAdapter.addItem(GridItem(mAdapter.itemCount, bitmap, data?.data))
+                        mAdapter.addItem(GridItem(mAdapter.itemCount, bitmap, data?.data)) // add photo to recyclerview
                     }
                 }
                 else{
@@ -110,8 +107,27 @@ class BFragment : Fragment(), FragmentLifecycle {
         this.onResume()
     }
 
+    override fun onCellClickListner(currentposition: Int, photolist: ArrayList<GridItem>) {
+        Toast.makeText(requireContext(),"Cell clicked", Toast.LENGTH_SHORT).show()
+//        photoposition = currentposition
+//        photoArray = photolist
 
+        val mDialog = PhotoDialog()
+        mDialog.show(requireFragmentManager(), "PHOTO")
+        mDialog.PhotoPosition = currentposition
+        mDialog.PhotoArray = photolist
 
+//        println(photoposition)
+//        val intent = Intent(requireContext(), PhotoView::class.java)
+//
+//        intent.putExtra("key", 3)
+//        requireContext().startActivity(intent)
+
+    }
+
+//    fun sendcurrentpostion(): Int {
+//        return photoposition
+//    }
 
 
 
