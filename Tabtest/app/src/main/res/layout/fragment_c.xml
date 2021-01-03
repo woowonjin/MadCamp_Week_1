@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.65"
-        android:background="@color/black">
+        >
         <LinearLayout
             android:id="@+id/weather"
             android:layout_width="match_parent"
@@ -24,7 +24,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:background="@color/white"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginBottom="20dp"
@@ -58,24 +57,42 @@
             <!--                weather image and temperature-->
             <LinearLayout
                 android:id="@+id/mid"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="4"
                 android:orientation="vertical"
                 >
-
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:id="@+id/temperature"
-                    android:text="Temperature"
-                    android:autoSizeTextType="uniform"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:gravity="center"
-                    android:layout_weight="1"
-                    />
+                    android:orientation="horizontal"
+                    android:layout_weight="1">
+                    <ImageView
+                        android:id="@+id/precipitation_type"
+                        android:layout_width="0dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:src="@drawable/icon_sunny"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="3"
+                        android:layout_height="match_parent"
+                        android:id="@+id/temperature"
+                        android:text="Temperature"
+                        android:autoSizeTextType="uniform"
+                        android:layout_gravity="left"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:gravity="center"
+                        />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -92,7 +109,6 @@
                 android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@id/mid">
                 <LinearLayout
-                    android:id="@+id/wind_direction"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -105,20 +121,24 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginBottom="10dp"
+                        android:src="@drawable/icon_wind_direction"
                         android:layout_weight="2"/>
                     <TextView
+                        android:id="@+id/wind_direction"
+                        android:autoSizeTextType="uniform"
                         android:layout_width="match_parent"
+                        android:text="null"
                         android:layout_height="0dp"
+                        android:gravity="center"
                         android:layout_weight="1"/>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/wind_speed"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:background="#aaaaaa">
+                    >
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -129,18 +149,21 @@
                         android:layout_marginBottom="10dp"
                         android:src="@drawable/icon_wind"/>
                     <TextView
+                        android:id="@+id/wind_speed"
+                        android:autoSizeTextType="uniform"
+                        android:text="null"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:gravity="center"
                         android:layout_weight="1"/>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/precipitation"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:background="#333333">
+                    >
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -148,20 +171,24 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginBottom="10dp"
+                        android:src="@drawable/icon_precipitation"
                         android:layout_weight="2"/>
                     <TextView
+                        android:id="@+id/precipitation"
+                        android:autoSizeTextType="uniform"
+                        android:text="null"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:gravity="center"
                         android:layout_weight="1"/>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/wind_humidity"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:background="#888888">
+                    >
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -169,10 +196,15 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginBottom="10dp"
+                        android:src="@drawable/icon_humidity"
                         android:layout_weight="2"/>
                     <TextView
+                        android:id="@+id/humidity"
+                        android:autoSizeTextType="uniform"
+                        android:text="null"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:gravity="center"
                         android:layout_weight="1"/>
                 </LinearLayout>
 

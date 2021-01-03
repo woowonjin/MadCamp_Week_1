@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -225,8 +226,7 @@ class CFragment : Fragment(), FragmentLifecycle {
 
                         }
 
-                    }
-                    else if (response.body()?.response?.header?.resultCode == 3) {
+                    } else if (response.body()?.response?.header?.resultCode == 3) {
                         if (base_time.toInt() >= 100) {
                             if ((base_time.toInt() - 100) < 1000) {
                                 base_time = "0" + (base_time.toInt() - 100).toString()
@@ -246,11 +246,53 @@ class CFragment : Fragment(), FragmentLifecycle {
                     //                    Log.d("grid", tmp!!.y.toString())
                     //                    Log.d("api", response.body()!!.response.body.items.item.toString())
                     //                    Log.d("api", response.body()!!.response.body.items.item[0].category)
-                    println("온도:$tmp, 강수량:$tmp, 습도:$humi, 강수형태:$rainform, 풍향:$winddriec, 풍속:$wind")
+                    println("온도:$tmp, 강수량:$rain, 습도:$humi, 강수형태:$rainform, 풍향:$winddriec, 풍속:$wind")
 
-                    //Temperature UI Text
-                    var tmpText = fragC?.findViewById<TextView>(R.id.temperature)
-                    tmpText?.text=tmp
+                    //UI Text
+                    var weather_image = fragC?.findViewById<ImageView>(R.id.precipitation_type)
+                    when(rainform.toInt()){
+                        0 -> weather_image?.setImageResource(R.drawable.icon_sunny)
+                        1 -> weather_image?.setImageResource(R.drawable.icon_rain)
+                        2 -> weather_image?.setImageResource(R.drawable.icon_rainsnow)
+                        3 -> weather_image?.setImageResource(R.drawable.icon_snow)
+                        4 -> weather_image?.setImageResource(R.drawable.icon_rain)
+                        5 -> weather_image?.setImageResource(R.drawable.icon_rain)
+                        6 -> weather_image?.setImageResource(R.drawable.icon_rainsnow)
+                        7 -> weather_image?.setImageResource(R.drawable.icon_snow)
+                        else -> Log.d("Error", "Thers's Error in rainform")
+                    }
+
+                    fragC?.findViewById<TextView>(R.id.temperature)?.text = tmp + "°C"
+//                    fragC?.findViewById<TextView>(R.id.wind_direction)?.text = winddriec
+                    fragC?.findViewById<TextView>(R.id.wind_speed)?.text = wind + "m/s"
+                    fragC?.findViewById<TextView>(R.id.precipitation)?.text = rain + "mm"
+                    fragC?.findViewById<TextView>(R.id.humidity)?.text = humi + "%"
+                    if (winddriec != "") {
+                        val wind_int = ((winddriec.toDouble() + 22.5 * 0.5) / 22.5).toInt()
+                        var windDir = ""
+                        when (wind_int) {
+                            0 -> windDir = "N"
+                            1 -> windDir = "NNE"
+                            2 -> windDir = "NE"
+                            3 -> windDir = "ENE"
+                            4 -> windDir = "E"
+                            5 -> windDir = "ESE"
+                            6 -> windDir = "SE"
+                            7 -> windDir = "SSE"
+                            8 -> windDir = "S"
+                            9 -> windDir = "SSW"
+                            10 -> windDir = "SW"
+                            11 -> windDir = "WSW"
+                            12 -> windDir = "W"
+                            13 -> windDir = "WNW"
+                            14 -> windDir = "NW"
+                            15 -> windDir = "NNW"
+                            16 -> windDir = "N"
+                            else -> "Error"
+                        }
+                        fragC?.findViewById<TextView>(R.id.wind_direction)?.text =
+                            windDir.toString()
+                    }
                 }
             }
 
