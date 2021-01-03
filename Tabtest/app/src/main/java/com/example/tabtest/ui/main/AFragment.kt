@@ -1,13 +1,12 @@
 package com.example.tabtest.ui.main
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
-import android.os.*
+import android.os.Bundle
+import android.text.method.Touch
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.GestureDetector.SimpleOnGestureListener
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -17,15 +16,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.viewpager.widget.ViewPager
 import com.example.tabtest.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
-import android.os.SystemClock.sleep
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 
 class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle {
@@ -33,6 +27,10 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
     private var disposable = Disposables.empty()
     private val mAdapter = CustomAdapter()
     private var SaveQuery: String? = ""
+
+    private lateinit var simpleOnGestureListener: SimpleOnGestureListener
+
+//    private lateinit var mDetector: GestureDetector
 //    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 //        inflater.inflate(R.menu.main_menu, menu)
 //        super.onCreateOptionsMenu(menu, inflater)
@@ -53,6 +51,8 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
         //val button: Button = root.findViewById(R.id.button)
         searchView.setOnQueryTextListener(this) //modify
         Log.d("check", "search")
+
+
 
 //        val frame: View = requireActivity().findViewById(R.id.frame)
 //        frame.setOnClickListener(object: View.OnClickListener{
@@ -80,6 +80,9 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
         val layout = LinearLayoutManager(requireContext())
         recyler_view.layoutManager = layout
         //recyler_view.setHasFixedSize(true)
+
+
+
 
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -212,6 +215,45 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
 
 //        onStart()
     }
+
+//    override fun onDoubleTap(e: MotionEvent?): Boolean {
+//        Log.d("Gesture", "onDoubleTap: $e")
+//        return true
+//    }
+//
+//    override fun onShowPress(e: MotionEvent?) {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun onSingleTapUp(e: MotionEvent?): Boolean {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun onDown(e: MotionEvent?): Boolean {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun onDoubleTapEvent(e: MotionEvent?): Boolean {
+//        Log.d("Gesture", "onDoubleTap: $e")
+//        return true
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun onLongPress(e: MotionEvent?) {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+//        TODO("Not yet implemented")
+//    }
 
 //    override fun onResume() {
 //        println("RESUME")

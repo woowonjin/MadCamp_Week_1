@@ -260,7 +260,7 @@ class CFragment : Fragment(), FragmentLifecycle {
                         //                    Log.d("grid", tmp!!.y.toString())
                         //                    Log.d("api", response.body()!!.response.body.items.item.toString())
                         //                    Log.d("api", response.body()!!.response.body.items.item[0].category)
-                        println("온도:$tmp, 강수량:$tmp, 습도:$humi, 강수형태:$rainform, 풍향:$winddriec, 풍속:$wind")
+                        println("온도:$tmp, 강수량:$rain, 습도:$humi, 강수형태:$rainform, 풍향:$winddriec, 풍속:$wind")
                     }
                 }
 

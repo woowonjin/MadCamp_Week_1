@@ -55,6 +55,9 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
         viewPager.setOnPageChangeListener(pageChangeListener)
 
+
+
+
     }
 
 
