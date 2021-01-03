@@ -249,17 +249,19 @@ class CFragment : Fragment(), FragmentLifecycle {
                     println("온도:$tmp, 강수량:$rain, 습도:$humi, 강수형태:$rainform, 풍향:$winddriec, 풍속:$wind")
 
                     //UI Text
-                    var weather_image = fragC?.findViewById<ImageView>(R.id.precipitation_type)
-                    when(rainform.toInt()){
-                        0 -> weather_image?.setImageResource(R.drawable.icon_sunny)
-                        1 -> weather_image?.setImageResource(R.drawable.icon_rain)
-                        2 -> weather_image?.setImageResource(R.drawable.icon_rainsnow)
-                        3 -> weather_image?.setImageResource(R.drawable.icon_snow)
-                        4 -> weather_image?.setImageResource(R.drawable.icon_rain)
-                        5 -> weather_image?.setImageResource(R.drawable.icon_rain)
-                        6 -> weather_image?.setImageResource(R.drawable.icon_rainsnow)
-                        7 -> weather_image?.setImageResource(R.drawable.icon_snow)
-                        else -> Log.d("Error", "Thers's Error in rainform")
+                    if(rainform != "") {
+                        var weather_image = fragC?.findViewById<ImageView>(R.id.precipitation_type)
+                        when (rainform.toInt()) {
+                            0 -> weather_image?.setImageResource(R.drawable.icon_sunny)
+                            1 -> weather_image?.setImageResource(R.drawable.icon_rain)
+                            2 -> weather_image?.setImageResource(R.drawable.icon_rainsnow)
+                            3 -> weather_image?.setImageResource(R.drawable.icon_snow)
+                            4 -> weather_image?.setImageResource(R.drawable.icon_rain)
+                            5 -> weather_image?.setImageResource(R.drawable.icon_rain)
+                            6 -> weather_image?.setImageResource(R.drawable.icon_rainsnow)
+                            7 -> weather_image?.setImageResource(R.drawable.icon_snow)
+                            else -> Log.d("Error", "Thers's Error in rainform")
+                        }
                     }
 
                     fragC?.findViewById<TextView>(R.id.temperature)?.text = tmp + "°C"

@@ -19,6 +19,7 @@ import com.example.tabtest.ui.main.FragmentLifecycle
 import com.example.tabtest.ui.main.SectionsPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import java.lang.Exception
+import java.util.*
 
 
 class MainActivity : AppCompatActivity(), LocationListener {
@@ -74,14 +75,28 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
     public fun getGeo(){
         try{
-            println("Latitude is $Latitude")
-            println("lognitude is $Longtitude")
-            val resultList = mGeocoder?.getFromLocation(Latitude.toDouble(), Longtitude.toDouble(), 5)
-            Log.d("getGeo Complete", "${resultList?.get(0)?.getAddressLine(0)}")
-            val resultAddress = resultList?.get(0)?.getAddressLine(0).toString().split(", ")
-            val country = resultAddress[resultAddress.size-1]
-            state = resultAddress[resultAddress.size-2]
-            city = resultAddress[resultAddress.size-3]
+            println("${Locale.getDefault().getDisplayLanguage()}") // 한국어, English
+            val language = Locale.getDefault().getDisplayLanguage()
+            if(language == "English") {
+                println("Latitude is $Latitude")
+                println("lognitude is $Longtitude")
+                val resultList = mGeocoder?.getFromLocation(Latitude.toDouble(), Longtitude.toDouble(), 5)
+                Log.d("getGeo Complete", "${resultList?.get(0)?.getAddressLine(0)}")
+                val resultAddress = resultList?.get(0)?.getAddressLine(0).toString().split(", ")
+                val country = resultAddress[resultAddress.size - 1]
+                state = resultAddress[resultAddress.size - 2]
+                city = resultAddress[resultAddress.size - 3]
+            }
+            else{ //korea
+                println("Latitude is $Latitude")
+                println("lognitude is $Longtitude")
+                val resultList = mGeocoder?.getFromLocation(Latitude.toDouble(), Longtitude.toDouble(), 5)
+                Log.d("getGeo Complete", "${resultList?.get(0)?.getAddressLine(0)}")
+                val resultAddress = resultList?.get(0)?.getAddressLine(0).toString().split(" ")
+                val country = resultAddress[0]
+                state = resultAddress[1]
+                city = resultAddress[2]
+            }
         }catch (e : Exception){
             Log.d("Error", "주소 변환 실패")
         }
@@ -119,8 +134,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
                     try {
                         locationManager.requestLocationUpdates(
                             LocationManager.GPS_PROVIDER,
-                            5000,
-                            10f,
+                            0,
+                            0f,
                             this
                         )
                         Log.d("Success", "RequestLocationUpdates Success")
