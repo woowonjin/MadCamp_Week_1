@@ -30,7 +30,7 @@ class BFragment : Fragment(), FragmentLifecycle, CellClickListner {
 
     private val OPEN_GALLERY = 1
     var imageList : ArrayList<GridItem> = ArrayList<GridItem>()
-    private val mAdapter = GridRecyclerAdapter(this)
+    private val mAdapter = GridRecyclerAdapter(this) // pass ClickListner object (do override method in BFragmentclass) to Adapter
     var isIn = false
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = layoutInflater.inflate(R.layout.fragment_b, container, false)
@@ -109,14 +109,15 @@ class BFragment : Fragment(), FragmentLifecycle, CellClickListner {
     }
 
     override fun onCellClickListner(currentposition: Int, photolist: ArrayList<GridItem>) {
+        // What to do when cell clicked
         Toast.makeText(requireContext(),"Cell clicked", Toast.LENGTH_SHORT).show()
 //        photoposition = currentposition
 //        photoArray = photolist
 
-        val mDialog = PhotoDialog()
-        mDialog.show(requireFragmentManager(), "PHOTO")
-        mDialog.PhotoPosition = currentposition
-        mDialog.PhotoArray = photolist
+        val mDialog = PhotoDialog() // make dialog object
+        mDialog.show(requireFragmentManager(), "PHOTO") //dialog show
+        mDialog.PhotoPosition = currentposition // send current position to dialog fragment
+        mDialog.PhotoArray = photolist // send photoArray to dialog position
 
 
 //        println(photoposition)

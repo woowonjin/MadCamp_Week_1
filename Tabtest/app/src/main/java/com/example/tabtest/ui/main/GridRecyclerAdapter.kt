@@ -18,11 +18,11 @@ class GridRecyclerAdapter(private val cellClickListner: CellClickListner) : Recy
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridRecyclerAdapter.ItemViewHolder {
         Log.d("position", "onCreateViewHolder")
-        val holder = ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.grid_image, parent, false))
-        holder.itemView.setOnClickListener {
+        val holder = ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.grid_image, parent, false)) // item that have(hold) photo
+        holder.itemView.setOnClickListener { //set listner by CellClicklistner that from BFragment
             setPosition(holder.adapterPosition)
 //            Toast.makeText(parent.context, "${holder.adapterPosition} 아이템 클릭!", Toast.LENGTH_SHORT).show()
-            cellClickListner.onCellClickListner(holder.adapterPosition, dataList)
+            cellClickListner.onCellClickListner(holder.adapterPosition, dataList) // get cellClickListner object and do onCellClickListner method when Click the itemView
 
         }
         return holder

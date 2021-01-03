@@ -240,6 +240,7 @@ class CFragment : Fragment(), FragmentLifecycle {
 
                         }
                         else if (response.body()?.response?.header?.resultCode == 3) {
+                            println("No data")
                             if (base_time.toInt() >= 100) {
                                 if ((base_time.toInt() - 100) < 1000) {
                                     base_time = "0" + (base_time.toInt() - 100).toString()
