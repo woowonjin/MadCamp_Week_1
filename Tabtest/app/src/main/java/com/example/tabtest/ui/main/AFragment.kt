@@ -1,8 +1,9 @@
 package com.example.tabtest.ui.main
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Bundle
+import android.os.*
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,14 +22,17 @@ import com.example.tabtest.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
+import android.os.SystemClock.sleep
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 
 class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle {
     private lateinit var contactsHelper: ContactsHelper
     private var disposable = Disposables.empty()
     private val mAdapter = CustomAdapter()
-
-
+    private var SaveQuery: String? = ""
 //    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 //        inflater.inflate(R.menu.main_menu, menu)
 //        super.onCreateOptionsMenu(menu, inflater)
@@ -37,6 +41,9 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
+
+        println("ONCREATEVIEW")
+
         val root = inflater.inflate(R.layout.fragment_a, container, false)
         val textView: TextView = root.findViewById(R.id.section_label)
         val swipeRefreshLayout: SwipeRefreshLayout = root.findViewById(R.id.srl_main)
@@ -44,15 +51,15 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
 
         val searchView: SearchView = root.findViewById(R.id.searchV)
         //val button: Button = root.findViewById(R.id.button)
-        searchView.setOnQueryTextListener(this)
+        searchView.setOnQueryTextListener(this) //modify
         Log.d("check", "search")
 
-        val frame: View = requireActivity().findViewById(R.id.frame)
-        frame.setOnClickListener(object: View.OnClickListener{
-            override fun onClick(v: View?) {
-                Log.d("frame","touch")
-            }
-        })
+//        val frame: View = requireActivity().findViewById(R.id.frame)
+//        frame.setOnClickListener(object: View.OnClickListener{
+//            override fun onClick(v: View) {
+//                Log.d("frame","touch")
+//            }
+//        })
 
 //        button.setOnClickListener{
 //            onClick()
@@ -88,16 +95,20 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
             loadContacts()
         }
 
-
         swipeRefreshLayout.setOnRefreshListener {
-            contactsHelper = ContactsHelper(requireContext().contentResolver)
-
-            val recyler_view: RecyclerView = root.findViewById(R.id.recycler_view)
-            recyler_view.adapter = mAdapter
-
-            val layout = LinearLayoutManager(requireContext())
-            recyler_view.layoutManager = layout
+//            contactsHelper = ContactsHelper(requireContext().contentResolver)
+//
+//            val recyler_view: RecyclerView = root.findViewById(R.id.recycler_view)
+//            recyler_view.adapter = mAdapter
+//
+//            val layout = LinearLayoutManager(requireContext())
+//            recyler_view.layoutManager = layout
             //recyler_view.setHasFixedSize(true)
+
+            if(!searchView.isIconified()){
+                searchView.onActionViewCollapsed()
+            }
+
 
             if (ContextCompat.checkSelfPermission(
                     requireContext(),
@@ -111,7 +122,11 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
                 )
             } else {
                 loadContacts()
+//                sleep(1000)
+                println(SaveQuery)
+//                if(SaveQuery!=null){ this.search(SaveQuery)}
             }
+
             swipeRefreshLayout.isRefreshing = false
         }
         Log.d("check", "here")
@@ -126,6 +141,8 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 mAdapter.bindItem(it.values.toList()) //as MutableList<ContactModel>)
+                println("LOAD LIST, ${it.values.toList()}")
+
             }, { Log.e("ContactHelper", it.message, it) })
     }
 
@@ -155,8 +172,9 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        //Log.d("Text", "text is " + newText!!)
+        Log.d("Text", "text is " + newText!!)
         search(newText)
+        SaveQuery = newText
 
         return false
     }
@@ -164,10 +182,12 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
     override fun onQueryTextSubmit(query: String?): Boolean {
         Log.d("Text", "text is " + query!!)
         search(query)
+        SaveQuery = query
         return false
     }
 
-    private fun search(s: String?) {
+    private fun search (s: String?) {
+        println("SEARCH")
         mAdapter.search(s) {
             // update UI on nothing found
             Toast.makeText(context, "Nothing Found", Toast.LENGTH_SHORT).show()
@@ -180,13 +200,28 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
 
     override fun onPauseFragment() {
         Log.d("tab","pauseA")
-        this.onDestroyView()
+        val searchView: SearchView = requireView().findViewById(R.id.searchV)
+        searchView.clearFocus()
+
+
+//        onStop()
     }
 
     override fun onResumeFragment() {
         Log.d("tab","resumeA")
-        this.onResume()
+
+//        onStart()
     }
+
+//    override fun onResume() {
+//        println("RESUME")
+//        super.onResume()
+//    }
+//
+//    override fun onPause() {
+//        println("PAUSE")
+//        super.onPause()
+//    }
 
 
 //    override fun onBackPressed() {

@@ -11,27 +11,37 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tabtest.R
 import android.widget.Filterable
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import java.util.concurrent.locks.ReentrantLock
+
 
 class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Filterable{
     private var items: List<ContactModel> = emptyList()
     private var searchList = mutableListOf<ContactModel>()
+    val mutex = Mutex()
+    val lock = ReentrantLock()
 
+    @Synchronized
     fun bindItem(items: List<ContactModel>){
+
         this.items = items
         this.searchList = ArrayList(items)
-        for(s in searchList){
+
+        for(s in items){
             Log.d("list", "element : " + s)
         }
         notifyDataSetChanged()
     }
 
-        inner class ContactsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-            private val userPhoto = itemView.findViewById<ImageView>(R.id.userimg)
-            private val userName = itemView.findViewById<TextView>(R.id.userNameTxt)
-            private val userPay = itemView.findViewById<TextView>(R.id.payTxt)
-            private val userAddress: TextView = itemView.findViewById<TextView>(R.id.addressTxt)
+    inner class ContactsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+        private val userPhoto = itemView.findViewById<ImageView>(R.id.userimg)
+        private val userName = itemView.findViewById<TextView>(R.id.userNameTxt)
+        private val userPay = itemView.findViewById<TextView>(R.id.payTxt)
+        private val userAddress: TextView = itemView.findViewById<TextView>(R.id.addressTxt)
 
-            fun bindItem(contactModel: ContactModel) {
+        @Synchronized fun bindItem(contactModel: ContactModel) {
+            lock.lock()
 //                if(contactModel.photoUri!= ""){
 //                val resourceId = context.resources.getIdentifier(contactModel.photoUri, "drawble", context.packageName)
 //
@@ -44,41 +54,41 @@ class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Fi
 //                        userPhoto.setImageResource(R.mipmap.ic_launcher_round)
 //                }
 
-                userName.text = contactModel.fullName
+            userName.text = contactModel.fullName
 
-                userPay.visibility =
-                    if (contactModel.phoneNumbers.isEmpty()) View.GONE else View.VISIBLE
-                userPay.text = composePhoneNumbersText(contactModel.phoneNumbers)
+            userPay.visibility =
+                if (contactModel.phoneNumbers.isEmpty()) View.GONE else View.VISIBLE
+            userPay.text = composePhoneNumbersText(contactModel.phoneNumbers)
 
-                //val resourceId = context.resources.getIdentifier(contactModel.photoUri)
+            //val resourceId = context.resources.getIdentifier(contactModel.photoUri)
 
-                 if (contactModel.photoUri.isNullOrEmpty()) {
-                        userPhoto.setImageResource(R.mipmap.ic_launcher_round)
-                    } else {
-                     userPhoto.visibility = View.VISIBLE
-                     userPhoto.setImageURI(Uri.parse(contactModel.photoUri))
-                 }
+             if (contactModel.photoUri.isNullOrEmpty()) {
+                    userPhoto.setImageResource(R.mipmap.ic_launcher_round)
+                } else {
+                 userPhoto.visibility = View.VISIBLE
+                 userPhoto.setImageURI(Uri.parse(contactModel.photoUri))
+             }
 
+            lock.unlock()
+        }
 
-            }
-
-            private fun composePhoneNumbersText(phoneNumbers: Set<String>): String =
-                phoneNumbers.joinToString(separator = "\n")
+        private fun composePhoneNumbersText(phoneNumbers: Set<String>): String =
+            phoneNumbers.joinToString(separator = "\n")
 
 
 //                userPay.text = dataVo.pay.toString()
 //                userAddress.text = dataVo.address
-        }
-
+    }
+    @Synchronized
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.view_item_layout, parent, false)
         return ContactsViewHolder(view)
     }
-
+    @Synchronized
     override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
         holder.bindItem(items[position])
     }
-
+    @Synchronized
     override fun getItemCount(): Int {
         return items.size
     }
@@ -94,6 +104,7 @@ class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Fi
      * @param s the search query or text. It can be null.
      * @param onNothingFound a method-body to invoke when search returns nothing. It can be null.
      */
+    @Synchronized
     fun search(s: String?, onNothingFound: (() -> Unit)?) {
         this.onNothingFound = onNothingFound
         filter.filter(s)
@@ -101,12 +112,13 @@ class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Fi
     }
 
 
-
+    @Synchronized
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val charString = charSequence.toString()
                 if (charString.isEmpty()) {
+                    println("CHECK EMPTY")
                     items = searchList
                 } else {
                     val filteredList = ArrayList<ContactModel>()
@@ -117,6 +129,7 @@ class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Fi
                         }
                     }
                     items = filteredList
+                    println("$items")
                 }
                 val filterResults = FilterResults()
                 filterResults.values = items
@@ -124,6 +137,8 @@ class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Fi
             }
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
                 items = filterResults.values as ArrayList<ContactModel>
+                println("SEARCH SUCCESS")
+                println("$items")
                 notifyDataSetChanged()
             }
         }
