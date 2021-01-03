@@ -3,10 +3,12 @@ package com.example.tabtest
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -16,7 +18,7 @@ import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.example.tabtest.ui.main.FragmentLifecycle
 import com.example.tabtest.ui.main.SectionsPagerAdapter
 import com.google.android.material.tabs.TabLayout
-
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity(), LocationListener {
@@ -25,8 +27,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
     var Latitude = String()
     var Longtitude = String()
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
-
-
+    var location : Location? = null
+    var mGeocoder : Geocoder? = null
+    var state = String()
+    var city = String()
     private val pageChangeListener: OnPageChangeListener= object : OnPageChangeListener {
         var currentPosition = 0
         override fun onPageSelected(newPosition: Int) {
@@ -42,8 +46,11 @@ class MainActivity : AppCompatActivity(), LocationListener {
     }
 
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mGeocoder = Geocoder(this)
         getLocation()
         setContentView(R.layout.activity_main) // activity main view 확인
         //val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
@@ -65,24 +72,85 @@ class MainActivity : AppCompatActivity(), LocationListener {
 //        getLocation()
 //    }
 
+    public fun getGeo(){
+        try{
+            println("Latitude is $Latitude")
+            println("lognitude is $Longtitude")
+            val resultList = mGeocoder?.getFromLocation(Latitude.toDouble(), Longtitude.toDouble(), 5)
+            Log.d("getGeo Complete", "${resultList?.get(0)?.getAddressLine(0)}")
+            val resultAddress = resultList?.get(0)?.getAddressLine(0).toString().split(", ")
+            val country = resultAddress[resultAddress.size-1]
+            state = resultAddress[resultAddress.size-2]
+            city = resultAddress[resultAddress.size-3]
+        }catch (e : Exception){
+            Log.d("Error", "주소 변환 실패")
+        }
+    }
+
     public fun getLocation() {
         println("Get Location")
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
+        val isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        if ((ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED)
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                locationPermissionCode
+            )
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
+        else { //Permission Granted
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if(location == null){
+                Log.d("Error", "LastKnownLocation is null")
+            }
+            else {
+                Latitude = location?.latitude.toString()
+                Longtitude = location?.longitude.toString()
+                getGeo()
+            }
+            if (isGPSEnabled) {
+                println("Gps is Enabled")
+                if(locationManager != null) {
+                    try {
+                        locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            5000,
+                            10f,
+                            this
+                        )
+                        Log.d("Success", "RequestLocationUpdates Success")
+                    }
+                    catch (e : Exception){
+                        Log.d("Error", "Cannot RequestLocationUpdates")
+                    }
+                }
+                else{
+                    println("Error : Location Manager is null")
+                }
+            }
+            else {
+                println("Error : Please turn on the GPS")
+            }
+        }
     }
 
     override fun onLocationChanged(location: Location) {
+        println("onLocationChaged !!")
         Latitude = location.latitude.toString()
         Longtitude = location.longitude.toString()
+        getGeo()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == locationPermissionCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+                getLocation()
             }
             else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
@@ -96,5 +164,9 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
     public fun getLng() : String{
         return Longtitude
+    }
+
+    fun getAddress() : String{
+        return "$state $city"
     }
 }

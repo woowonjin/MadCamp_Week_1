@@ -46,12 +46,11 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
         searchView.setOnQueryTextListener(this)
         Log.d("check", "search")
 
-        val frame: View = requireActivity().findViewById(R.id.frame)
-        frame.setOnClickListener(object: View.OnClickListener{
-            override fun onClick(v: View?) {
-                Log.d("frame","touch")
-            }
-        })
+//        frame.setOnClickListener(object: View.OnClickListener{
+//            override fun onClick(v: View?) {
+//                Log.d("frame","touch")
+//            }
+//        })
 
 //        button.setOnClickListener{
 //            onClick()

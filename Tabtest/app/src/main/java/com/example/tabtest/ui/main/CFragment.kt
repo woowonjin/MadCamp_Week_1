@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -62,7 +63,7 @@ var wind: String = ""
 var humi: String = ""
 var winddriec: String = ""
 var rainform: String = ""
-
+var address = String()
 
 
 data class WEATHER (
@@ -123,10 +124,14 @@ object ApiObject {
 class CFragment : Fragment(), FragmentLifecycle {
     @RequiresApi(Build.VERSION_CODES.O)
     val formatter = DateTimeFormatter.ofPattern("yyyyMMdd,HHmm")
+
+    var fragC : View? = null
+
     @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_c, container, false)
+        fragC = root
 //        val act = activity as MainActivity
 //        act.getLocation()
 //        getCurrentDate()
@@ -169,13 +174,15 @@ class CFragment : Fragment(), FragmentLifecycle {
         base_time = currentTime
     }
 
-
     fun getCurrentPosition(){
         val act = activity as MainActivity
+        act.getLocation()
         lat = act.getLat()
         lng = act.getLng()
+        address = act.getAddress()
         println("Latitude : $lat")
         println("Longtitude : $lng")
+        println("Address : $address")
     }
 
 
@@ -184,14 +191,89 @@ class CFragment : Fragment(), FragmentLifecycle {
         this.onDestroyView()
     }
 
+    fun callweather() {
+        val call = ApiObject.retrofitService.GetWeather(data_type, num_of_rows, page_no, base_data, base_time, nx, ny)
+        call.enqueue(object : retrofit2.Callback<WEATHER> {
+            override fun onResponse(call: Call<WEATHER>, response: Response<WEATHER>) {
+                if (response.isSuccessful) {
+                    println("$base_data, $base_time")
+                    Log.d("api", "${response.body()}")
+                    if (response.body()?.response?.header?.resultCode == 0) {
+                        println("loading weather success")
+                        for (item in response!!.body()!!.response.body?.items?.item) {
+                            when (item.category) {
+                                "T1H" -> {
+                                    tmp = item.obsrValue
+                                }
+                                "RN1" -> {
+                                    rain = item.obsrValue
+                                }
+                                "REH" -> {
+                                    humi = item.obsrValue
+                                }
+                                "PTY" -> {
+                                    rainform = item.obsrValue
+                                }
+                                "VEC" -> {
+                                    winddriec = item.obsrValue
+                                }
+                                "WSD" -> {
+                                    wind = item.obsrValue
+                                }
+                                else -> println("NO NEED")
+                            }
+
+                        }
+
+                    }
+                    else if (response.body()?.response?.header?.resultCode == 3) {
+                        if (base_time.toInt() >= 100) {
+                            if ((base_time.toInt() - 100) < 1000) {
+                                base_time = "0" + (base_time.toInt() - 100).toString()
+                            } else {
+                                base_time = (base_time.toInt() - 100).toString()
+                            }
+                        } else {
+                            base_time = "2300"
+                        }
+                        callweather()
+
+                    } else {
+                        println("FAIL LOAD WEATHER")
+                    }
+                    //                    val tmp: LatXLngY? = convertGRID_GPS(TO_GRID, 36.3741555, 127.3658293)
+                    //                    Log.d("grid", tmp!!.x.toString())
+                    //                    Log.d("grid", tmp!!.y.toString())
+                    //                    Log.d("api", response.body()!!.response.body.items.item.toString())
+                    //                    Log.d("api", response.body()!!.response.body.items.item[0].category)
+                    println("온도:$tmp, 강수량:$tmp, 습도:$humi, 강수형태:$rainform, 풍향:$winddriec, 풍속:$wind")
+
+                    //Temperature UI Text
+                    var tmpText = fragC?.findViewById<TextView>(R.id.temperature)
+                    tmpText?.text=tmp
+                }
+            }
+
+            override fun onFailure(call: Call<WEATHER>, t: Throwable) {
+                println("FAIL LOAD WEATHER")
+            }
+        })
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResumeFragment() {
         Log.d("tab","resumeC")
         getCurrentDate()
         getCurrentPosition()
+        if(lat == "" || lng == ""){
+            Toast.makeText(this.requireContext(), "gps is null", Toast.LENGTH_SHORT).show()
+        }
+        else{
+            Toast.makeText(this.requireContext(), "gps is Ok", Toast.LENGTH_SHORT).show()
+        }
         println("date is $base_data")
         println("time is $base_time")
-
+        println("Address is $address")
         var grid: LatXLngY?
 
         if (!(lat == "") && !(lng == "")) {
@@ -204,72 +286,14 @@ class CFragment : Fragment(), FragmentLifecycle {
         nx = grid?.x?.toInt().toString()
         ny = grid?.y?.toInt().toString()
         println("$nx, $ny")
-        fun callweather() {
-            val call = ApiObject.retrofitService.GetWeather(data_type, num_of_rows, page_no, base_data, base_time, nx, ny)
-            call.enqueue(object : retrofit2.Callback<WEATHER> {
-                override fun onResponse(call: Call<WEATHER>, response: Response<WEATHER>) {
-                    if (response.isSuccessful) {
-                        println("$base_data, $base_time")
-                        Log.d("api", "${response.body()}")
-                        if (response.body()?.response?.header?.resultCode == 0) {
-                            println("loading weather success")
-                            for (item in response!!.body()!!.response.body?.items?.item) {
-                                when (item.category) {
-                                    "T1H" -> {
-                                        tmp = item.obsrValue
-                                    }
-                                    "RN1" -> {
-                                        rain = item.obsrValue
-                                    }
-                                    "REH" -> {
-                                        humi = item.obsrValue
-                                    }
-                                    "PTY" -> {
-                                        rainform = item.obsrValue
-                                    }
-                                    "VEC" -> {
-                                        winddriec = item.obsrValue
-                                    }
-                                    "WSD" -> {
-                                        wind = item.obsrValue
-                                    }
-                                    else -> println("NO NEED")
-                                }
-
-                            }
-
-                        }
-                        else if (response.body()?.response?.header?.resultCode == 3) {
-                            if (base_time.toInt() >= 100) {
-                                if ((base_time.toInt() - 100) < 1000) {
-                                    base_time = "0" + (base_time.toInt() - 100).toString()
-                                } else {
-                                    base_time = (base_time.toInt() - 100).toString()
-                                }
-                            } else {
-                                base_time = "2300"
-                            }
-                            callweather()
-
-                        } else {
-                            println("FAIL LOAD WEATHER")
-                        }
-                        //                    val tmp: LatXLngY? = convertGRID_GPS(TO_GRID, 36.3741555, 127.3658293)
-                        //                    Log.d("grid", tmp!!.x.toString())
-                        //                    Log.d("grid", tmp!!.y.toString())
-                        //                    Log.d("api", response.body()!!.response.body.items.item.toString())
-                        //                    Log.d("api", response.body()!!.response.body.items.item[0].category)
-                        println("온도:$tmp, 강수량:$tmp, 습도:$humi, 강수형태:$rainform, 풍향:$winddriec, 풍속:$wind")
-                    }
-                }
-
-                override fun onFailure(call: Call<WEATHER>, t: Throwable) {
-                    println("FAIL LOAD WEATHER")
-                }
-            })
-        }
-
         callweather()
+
+        //초기화
+        //Address
+        var addrText = fragC?.findViewById<TextView>(R.id.address)
+        addrText?.text = address
+
+        //Temperature
 
     }
 
