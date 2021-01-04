@@ -8,7 +8,11 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+<<<<<<< HEAD
 import android.util.Log
+=======
+import android.view.MotionEvent
+>>>>>>> feature#13
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -20,7 +24,6 @@ import com.example.tabtest.ui.main.SectionsPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import java.lang.Exception
 
-
 class MainActivity : AppCompatActivity(), LocationListener {
     lateinit var locationManager: LocationManager
     private val locationPermissionCode = 2
@@ -31,6 +34,25 @@ class MainActivity : AppCompatActivity(), LocationListener {
     var mGeocoder : Geocoder? = null
     var state = String()
     var city = String()
+
+    ///GESTURE
+    private val OnTouchListener= ArrayList<MyOnTouchListener>()
+
+    public interface MyOnTouchListener{
+        fun OnTouch(ev: MotionEvent?)
+    }
+
+    fun registerMyOnTouchListener(listener: MyOnTouchListener){
+        OnTouchListener.add(listener)
+        println("ADD")
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        for (listener in OnTouchListener) listener.OnTouch(ev)
+        return super.dispatchTouchEvent(ev)
+    }
+
+
     private val pageChangeListener: OnPageChangeListener= object : OnPageChangeListener {
         var currentPosition = 0
         override fun onPageSelected(newPosition: Int) {
@@ -61,6 +83,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
         tabs.setupWithViewPager(viewPager) // pager와 tab layout 연결
 
         viewPager.setOnPageChangeListener(pageChangeListener)
+
+
 
     }
 
