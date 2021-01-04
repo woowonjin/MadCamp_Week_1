@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.example.tabtest.R
+import uk.co.senab.photoview.PhotoViewAttacher
 
 
 class PhotoPagerAdapter internal constructor(
@@ -24,6 +25,7 @@ class PhotoPagerAdapter internal constructor(
         val imageView: ImageView = view.findViewById(R.id.photo_view)
 //        imageView.setImageResource(image[position].getImageId(container.context))
         imageView.setImageBitmap(image[position].photo)
+        PhotoViewAttacher(imageView)
         val viewpager = container as ViewPager
         viewpager.addView(view,0)
         Log.d("Success", "Success Image view")
