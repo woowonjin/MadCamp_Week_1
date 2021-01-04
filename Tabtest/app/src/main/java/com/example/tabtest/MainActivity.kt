@@ -7,6 +7,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.view.MotionEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -18,13 +19,29 @@ import com.example.tabtest.ui.main.SectionsPagerAdapter
 import com.google.android.material.tabs.TabLayout
 
 
-
 class MainActivity : AppCompatActivity(), LocationListener {
     lateinit var locationManager: LocationManager
     private val locationPermissionCode = 2
     var Latitude = String()
     var Longtitude = String()
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
+
+    ///GESTURE
+    private val OnTouchListener= ArrayList<MyOnTouchListener>()
+
+    public interface MyOnTouchListener{
+        fun OnTouch(ev: MotionEvent?)
+    }
+
+    fun registerMyOnTouchListener(listener: MyOnTouchListener){
+        OnTouchListener.add(listener)
+        println("ADD")
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        for (listener in OnTouchListener) listener.OnTouch(ev)
+        return super.dispatchTouchEvent(ev)
+    }
 
 
     private val pageChangeListener: OnPageChangeListener= object : OnPageChangeListener {
@@ -54,7 +71,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
         tabs.setupWithViewPager(viewPager) // pager와 tab layout 연결
 
         viewPager.setOnPageChangeListener(pageChangeListener)
-
 
 
 
