@@ -10,18 +10,19 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tabtest.R
 
-class GridRecyclerAdapter : RecyclerView.Adapter<GridRecyclerAdapter.ItemViewHolder>() {
+class GridRecyclerAdapter(private val cellClickListner: CellClickListner) : RecyclerView.Adapter<GridRecyclerAdapter.ItemViewHolder>() {
 
-    var dataList = ArrayList<GridItem>()
+    var dataList = ArrayList<GridItem>() // list of photo
 
     var mPosition = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridRecyclerAdapter.ItemViewHolder {
         Log.d("position", "onCreateViewHolder")
-        val holder = ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.grid_image, parent, false))
-        holder.itemView.setOnClickListener {
+        val holder = ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.grid_image, parent, false)) // item that have(hold) photo
+        holder.itemView.setOnClickListener { //set listner by CellClicklistner that from BFragment
             setPosition(holder.adapterPosition)
-            Toast.makeText(parent.context, "${holder.adapterPosition} 아이템 클릭!", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(parent.context, "${holder.adapterPosition} 아이템 클릭!", Toast.LENGTH_SHORT).show()
+            cellClickListner.onCellClickListner(holder.adapterPosition, dataList) // get cellClickListner object and do onCellClickListner method when Click the itemView
 
         }
         return holder
@@ -34,6 +35,9 @@ class GridRecyclerAdapter : RecyclerView.Adapter<GridRecyclerAdapter.ItemViewHol
 
     override fun onBindViewHolder(holder: GridRecyclerAdapter.ItemViewHolder, position: Int) {
         holder.bind(dataList[position])
+//        holder.itemView.setOnClickListener {
+//            cellClickListner.onCellClickListner(this.getPosition())
+//        }
     }
 
     fun getPosition():Int{
@@ -66,6 +70,9 @@ class GridRecyclerAdapter : RecyclerView.Adapter<GridRecyclerAdapter.ItemViewHol
 //                notifyDataSetChanged()
             Log.d("Success", "Success to find Image view")
         }
+
+
+
     }
 
 }
