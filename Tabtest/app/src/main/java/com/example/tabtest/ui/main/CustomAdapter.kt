@@ -1,22 +1,22 @@
 package com.example.tabtest.ui.main
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tabtest.R
-import android.widget.Filterable
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.locks.ReentrantLock
 
 
-class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Filterable{
+class CustomAdapter(val ContactClickListner: ContactClickListner): RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Filterable{
     private var items: List<ContactModel> = emptyList()
     private var searchList = mutableListOf<ContactModel>()
     val mutex = Mutex()
@@ -34,13 +34,22 @@ class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Fi
         notifyDataSetChanged()
     }
 
-    inner class ContactsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class ContactsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener{
         private val userPhoto = itemView.findViewById<ImageView>(R.id.userimg)
         private val userName = itemView.findViewById<TextView>(R.id.userNameTxt)
         private val userPay = itemView.findViewById<TextView>(R.id.payTxt)
         private val userAddress: TextView = itemView.findViewById<TextView>(R.id.addressTxt)
+        private val call = itemView.findViewById<ImageButton>(R.id.call_btn)
 
-        @Synchronized fun bindItem(contactModel: ContactModel) {
+        override fun onClick(v: View?) {
+            ContactClickListner.onContactClickListner(composePhoneNumbersText(items[adapterPosition].phoneNumbers))
+//            println("TOUCH")
+
+        }
+
+
+
+        @Synchronized fun bindItem(contactModel: ContactModel, ContactClickListner: ContactClickListner) {
             lock.lock()
 //                if(contactModel.photoUri!= ""){
 //                val resourceId = context.resources.getIdentifier(contactModel.photoUri, "drawble", context.packageName)
@@ -53,6 +62,8 @@ class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Fi
 //                } else {
 //                        userPhoto.setImageResource(R.mipmap.ic_launcher_round)
 //                }
+
+            call.setOnClickListener(this)
 
             userName.text = contactModel.fullName
 
@@ -82,11 +93,16 @@ class CustomAdapter: RecyclerView.Adapter<CustomAdapter.ContactsViewHolder>(),Fi
     @Synchronized
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.view_item_layout, parent, false)
+//        val holder = GridRecyclerAdapter.ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.grid_image, parent, false))
+//        view.itemView.setOnClickListener { //set listner by CellClicklistner that from BFragment
+//            ContactClickListner.onContactClickListner() // get cellClickListner object and do onCellClickListner method when Click the itemView
+//
+//        }
         return ContactsViewHolder(view)
     }
     @Synchronized
     override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
-        holder.bindItem(items[position])
+        holder.bindItem(items[position], ContactClickListner)
     }
     @Synchronized
     override fun getItemCount(): Int {

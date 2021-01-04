@@ -1,12 +1,15 @@
 package com.example.tabtest.ui.main
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
-import android.text.method.Touch
 import android.util.Log
-import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -22,11 +25,13 @@ import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 
 
-class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle {
+class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle, ContactClickListner {
     private lateinit var contactsHelper: ContactsHelper
     private var disposable = Disposables.empty()
-    private val mAdapter = CustomAdapter()
+    private val mAdapter = CustomAdapter(this)
     private var SaveQuery: String? = ""
+
+    val callIntent = Intent(Intent.ACTION_CALL)
 
     private lateinit var simpleOnGestureListener: SimpleOnGestureListener
 
@@ -164,6 +169,11 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
                     loadContacts()
                 }
             }
+            REQUEST_PHONE_CALL -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)){
+                    startActivity(callIntent)
+                }
+            }
             else -> {
                 // Ignore all other requests.
             }
@@ -172,6 +182,7 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
 
     companion object {
         private const val PERMISSION_READ_CONTACTS = 1
+        private const val REQUEST_PHONE_CALL = 1
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
@@ -215,6 +226,33 @@ class AFragment : Fragment(), SearchView.OnQueryTextListener, FragmentLifecycle 
 
 //        onStart()
     }
+
+    override fun onContactClickListner(CallNumber: String) {
+        println("CALL")
+        println("tell:"+CallNumber)
+
+        val PhoneNumber = "tel:"+CallNumber
+
+        callIntent.setData(Uri.parse((PhoneNumber)))
+
+//        if (ActivityCompat.checkSelfPermission(requireContext(),
+//                        Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//            println("NO PERMISSION")
+//            return
+//        }
+//        startActivity(callIntent)
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CALL_PHONE), REQUEST_PHONE_CALL)
+        }
+        else
+        {
+            startActivity(callIntent);
+        }
+
+
+    }
+
 
 //    override fun onDoubleTap(e: MotionEvent?): Boolean {
 //        Log.d("Gesture", "onDoubleTap: $e")
