@@ -43,6 +43,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.lang.Thread.sleep
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -135,34 +136,82 @@ class CFragment : Fragment(), FragmentLifecycle {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_c, container, false)
         fragC = root
-//        val act = activity as MainActivity
-//        act.getLocation()
-//        getCurrentDate()
-//        getCurrentPosition()
-//        val grid: LatXLngY? = convertGRID_GPS(TO_GRID, lat as Double, lng as Double)
-//        nx = grid!!.x.toString()
-//        ny = grid!!.y.toString()
-//        Log.d("grid", lat)
 
-//        val call = ApiObject.retrofitService.GetWeather(data_type, num_of_rows, page_no, base_data, base_time, nx, ny)
-//        call.enqueue(object : retrofit2.Callback<WEATHER>{
-//            override fun onResponse(call: Call<WEATHER>, response: Response<WEATHER>) {
-//                if (response.isSuccessful){
-//                    Log.d("api", response.body().toString())
-//                    val tmp: LatXLngY? = convertGRID_GPS(TO_GRID, 36.3741555, 127.3658293)
-//                    Log.d("grid", tmp!!.x.toString())
-//                    Log.d("grid", tmp!!.y.toString())
-////                    Log.d("api", response.body()!!.response.body.items.item.toString())
-////                    Log.d("api", response.body()!!.response.body.items.item[0].category)
-//
-//                }
-//            }
-//            override fun onFailure(call: Call<WEATHER>, t: Throwable) {
-//                //Log.d("api fail : ", t.message)
-//            }
-//        })
+        Log.d("tab","resumeC")
+        getCurrentDate()
+        getCurrentPosition()
+        if(lat == "" || lng == ""){
+            Toast.makeText(this.requireContext(), "gps is null", Toast.LENGTH_SHORT).show()
+//            onResumeFragment()
+        }
+        else{
+            Toast.makeText(this.requireContext(), "gps is Ok", Toast.LENGTH_SHORT).show()
+            println("date is $base_data")
+            println("time is $base_time")
+            println("Address is $address")
+            var grid: LatXLngY?
+
+            if (!(lat == "") && !(lng == "")) {
+                grid = convertGRID_GPS(TO_GRID, lat.toDouble(), lng.toDouble())
+            }
+            else{
+                grid = null
+                Log.d("error","retry load lat and lng")
+            }
+            nx = grid?.x?.toInt().toString()
+            ny = grid?.y?.toInt().toString()
+            println("$nx, $ny")
+            callweather()
+
+            //초기화
+            //Address
+            var addrText = fragC?.findViewById<TextView>(R.id.address)
+            while(address == "") {
+                addrText?.text = address
+            }
+            addrText?.text = address
+            //Temperature
+        }
+
 
         return root
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onResume() {
+        super.onResume()
+//        Log.d("tab","resumeC")
+//        getCurrentDate()
+//        getCurrentPosition()
+//        if(lat == "" || lng == ""){
+//            Toast.makeText(this.requireContext(), "gps is null", Toast.LENGTH_SHORT).show()
+//        }
+//        else{
+//            Toast.makeText(this.requireContext(), "gps is Ok", Toast.LENGTH_SHORT).show()
+//        }
+//        println("date is $base_data")
+//        println("time is $base_time")
+//        println("Address is $address")
+//        var grid: LatXLngY?
+//
+//        if (!(lat == "") && !(lng == "")) {
+//            grid = convertGRID_GPS(TO_GRID, lat.toDouble(), lng.toDouble())
+//        }
+//        else{
+//            grid = null
+//            Log.d("error","retry load lat and lng")
+//        }
+//        nx = grid?.x?.toInt().toString()
+//        ny = grid?.y?.toInt().toString()
+//        println("$nx, $ny")
+//        callweather()
+//
+//        //초기화
+//        //Address
+//        var addrText = fragC?.findViewById<TextView>(R.id.address)
+//        addrText?.text = address
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -399,7 +448,7 @@ class CFragment : Fragment(), FragmentLifecycle {
 
     }
 
-    fun callweather() {
+    @Synchronized fun callweather() {
         val call = ApiObject.retrofitService.GetWeather(data_type, num_of_rows, page_no, base_data, base_time, nx, ny)
         call.enqueue(object : retrofit2.Callback<WEATHER> {
             override fun onResponse(call: Call<WEATHER>, response: Response<WEATHER>) {
@@ -443,10 +492,12 @@ class CFragment : Fragment(), FragmentLifecycle {
                         } else {
                             base_time = "2300"
                         }
-                        callweather()
+                        return callweather()
 
                     } else {
                         println("FAIL LOAD WEATHER")
+                        println("ERROR : ${response.body()?.response?.header?.resultCode}")
+                        return callweather()
                     }
                     //                    val tmp: LatXLngY? = convertGRID_GPS(TO_GRID, 36.3741555, 127.3658293)
                     //                    Log.d("grid", tmp!!.x.toString())
@@ -508,44 +559,48 @@ class CFragment : Fragment(), FragmentLifecycle {
 
             override fun onFailure(call: Call<WEATHER>, t: Throwable) {
                 println("FAIL LOAD WEATHER")
+                return callweather()
             }
         })
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun onResumeFragment() {
+    @Synchronized override fun onResumeFragment() {
         Log.d("tab","resumeC")
         getCurrentDate()
         getCurrentPosition()
         if(lat == "" || lng == ""){
             Toast.makeText(this.requireContext(), "gps is null", Toast.LENGTH_SHORT).show()
+//            onResumeFragment()
         }
         else{
             Toast.makeText(this.requireContext(), "gps is Ok", Toast.LENGTH_SHORT).show()
-        }
-        println("date is $base_data")
-        println("time is $base_time")
-        println("Address is $address")
-        var grid: LatXLngY?
+            println("date is $base_data")
+            println("time is $base_time")
+            println("Address is $address")
+            var grid: LatXLngY?
 
-        if (!(lat == "") && !(lng == "")) {
-            grid = convertGRID_GPS(TO_GRID, lat.toDouble(), lng.toDouble())
-        }
-        else{
-            grid = null
-            Log.d("error","retry load lat and lng")
-        }
-        nx = grid?.x?.toInt().toString()
-        ny = grid?.y?.toInt().toString()
-        println("$nx, $ny")
-        callweather()
+            if (!(lat == "") && !(lng == "")) {
+                grid = convertGRID_GPS(TO_GRID, lat.toDouble(), lng.toDouble())
+            }
+            else{
+                grid = null
+                Log.d("error","retry load lat and lng")
+            }
+            nx = grid?.x?.toInt().toString()
+            ny = grid?.y?.toInt().toString()
+            println("$nx, $ny")
+            callweather()
 
-        //초기화
-        //Address
-        var addrText = fragC?.findViewById<TextView>(R.id.address)
-        addrText?.text = address
-
-        //Temperature
+            //초기화
+            //Address
+            var addrText = fragC?.findViewById<TextView>(R.id.address)
+            while(address == "") {
+                addrText?.text = address
+            }
+            addrText?.text = address
+            //Temperature
+        }
 
     }
 

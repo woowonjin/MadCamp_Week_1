@@ -25,8 +25,8 @@ import java.util.*
 class MainActivity : AppCompatActivity(), LocationListener {
     lateinit var locationManager: LocationManager
     private val locationPermissionCode = 2
-    var Latitude = String()
-    var Longtitude = String()
+    var Latitude = "37.532600"
+    var Longtitude = "127.024612"
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
     var location : Location? = null
     var mGeocoder : Geocoder? = null
@@ -73,10 +73,15 @@ class MainActivity : AppCompatActivity(), LocationListener {
 //        getLocation()
 //    }
 
-    public fun getGeo(){
+    @Synchronized public fun getGeo(){
         try{
             println("${Locale.getDefault().getDisplayLanguage()}") // 한국어, English
             val language = Locale.getDefault().getDisplayLanguage()
+            println("getGeo ok")
+            if(Latitude == "" || Longtitude == ""){
+                println("Latitude and Longitude has nothing!!")
+                getLocation()
+            }
             if(language == "English") {
                 println("Latitude is $Latitude")
                 println("lognitude is $Longtitude")
@@ -102,7 +107,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
     }
 
-    public fun getLocation() {
+    @Synchronized public fun getLocation() {
         println("Get Location")
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -119,6 +124,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
             )
         }
         else { //Permission Granted
+            println("Permission is OK")
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             if(location == null){
                 Log.d("Error", "LastKnownLocation is null")
@@ -141,9 +147,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
                         )
                         locationManager.requestLocationUpdates(
                                 LocationManager.NETWORK_PROVIDER,
-                        0,
-                        0f,
-                        this)
+                                0,
+                                0f,
+                                this)
+
                         Log.d("Success", "RequestLocationUpdates Success")
                     }
                     catch (e : Exception){
