@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -15,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -192,6 +194,211 @@ class CFragment : Fragment(), FragmentLifecycle {
         this.onDestroyView()
     }
 
+    fun getClothes(){
+        var temperature : Double? = null
+        if(tmp != ""){
+            temperature = tmp.toDouble()
+        }
+        //outer
+        val outer_image_1 = fragC?.findViewById<ImageView>(R.id.outer_image_1)
+        val outer_text_1 = fragC?.findViewById<TextView>(R.id.outer_text_1)
+        val outer_image_2 = fragC?.findViewById<ImageView>(R.id.outer_image_2)
+        val outer_text_2 = fragC?.findViewById<TextView>(R.id.outer_text_2)
+
+        //top
+        val top_image_1 = fragC?.findViewById<ImageView>(R.id.top_image_1)
+        val top_text_1 = fragC?.findViewById<TextView>(R.id.top_text_1)
+        val top_image_2 = fragC?.findViewById<ImageView>(R.id.top_image_2)
+        val top_text_2 = fragC?.findViewById<TextView>(R.id.top_text_2)
+
+        //bottom
+        val bottom_image_1 = fragC?.findViewById<ImageView>(R.id.bottom_image_1)
+        val bottom_text_1 = fragC?.findViewById<TextView>(R.id.bottom_text_1)
+        val bottom_image_2 = fragC?.findViewById<ImageView>(R.id.bottom_image_2)
+        val bottom_text_2 = fragC?.findViewById<TextView>(R.id.bottom_text_2)
+
+        val accessory_image_1 = fragC?.findViewById<ImageView>(R.id.accessory_image_1)
+        val accessory_text_1 = fragC?.findViewById<TextView>(R.id.accessory_text_1)
+        val accessory_image_2 = fragC?.findViewById<ImageView>(R.id.accessory_image_2)
+        val accessory_text_2 = fragC?.findViewById<TextView>(R.id.accessory_text_2)
+
+        if(temperature != null){
+            if(temperature >= 28){
+                top_text_1?.text = "반팔티"
+                top_image_1?.setImageResource(R.drawable.icon_short_sleeve)
+
+                bottom_text_1?.text = "반바지"
+                bottom_image_1?.setImageResource(R.drawable.icon_short_pant)
+            }
+            else if((23 <= temperature) && (temperature < 28)){
+                //top
+                top_text_1?.text = "반팔티"
+                top_image_1?.setImageResource(R.drawable.icon_short_sleeve)
+                top_text_2?.text = "셔츠"
+                top_image_2?.setImageResource(R.drawable.icon_shirts)
+
+                //bottom
+                bottom_text_1?.text = "면바지"
+                bottom_image_1?.setImageResource(R.drawable.icon_cotton_trousers)
+            }
+            else if(20 <= temperature && temperature < 23){
+                //outer
+                outer_text_1?.text = "가디건"
+                outer_image_1?.setImageResource(R.drawable.icon_cardigan)
+
+                //top
+                top_text_1?.text = "긴팔티"
+                top_image_1?.setImageResource(R.drawable.icon_long_sleeve)
+                top_text_2?.text = "셔츠"
+                top_image_2?.setImageResource(R.drawable.icon_shirts)
+
+                //bottom
+                bottom_text_1?.text = "청바지"
+                bottom_image_1?.setImageResource(R.drawable.icon_jean)
+                bottom_text_2?.text = "면바지"
+                bottom_image_2?.setImageResource(R.drawable.icon_cotton_trousers)
+
+            }
+            else if(17 <= temperature && temperature < 20){
+                //outer
+                outer_text_1?.text = "가디건"
+                outer_image_1?.setImageResource(R.drawable.icon_cardigan)
+
+                //top
+                top_text_1?.text = "긴팔티"
+                top_image_1?.setImageResource(R.drawable.icon_long_sleeve)
+                top_text_2?.text = "맨투맨"
+                top_image_2?.setImageResource(R.drawable.icon_sweat_shirt)
+
+                //bottom
+                bottom_text_1?.text = "청바지"
+                bottom_image_1?.setImageResource(R.drawable.icon_jean)
+                bottom_text_2?.text = "면바지"
+                bottom_image_2?.setImageResource(R.drawable.icon_cotton_trousers)
+
+            }
+            else if(12 <= temperature && temperature < 17){
+                //outer
+                outer_text_1?.text = "자켓"
+                outer_image_1?.setImageResource(R.drawable.icon_jacket)
+                outer_text_2?.text = "가디건"
+                outer_image_2?.setImageResource(R.drawable.icon_cardigan)
+
+                //top
+                top_text_1?.text = "긴팔티"
+                top_image_1?.setImageResource(R.drawable.icon_long_sleeve)
+                top_text_2?.text = "맨투맨"
+                top_image_2?.setImageResource(R.drawable.icon_sweat_shirt)
+
+                //bottom
+                bottom_text_1?.text = "청바지"
+                bottom_image_1?.setImageResource(R.drawable.icon_jean)
+                bottom_text_2?.text = "면바지"
+                bottom_image_2?.setImageResource(R.drawable.icon_cotton_trousers)
+
+            }
+            else if(9 <= temperature && temperature < 12){
+                //outer
+                outer_text_1?.text = "자켓"
+                outer_image_1?.setImageResource(R.drawable.icon_jacket)
+                outer_text_2?.text = "트랜치코트"
+                outer_image_2?.setImageResource(R.drawable.icon_trench_coat)
+
+                //top
+                top_text_1?.text = "니트"
+                top_image_1?.setImageResource(R.drawable.icon_knit_wear)
+                top_text_2?.text = "맨투맨"
+                top_image_2?.setImageResource(R.drawable.icon_sweat_shirt)
+
+                //bottom
+                bottom_text_1?.text = "청바지"
+                bottom_image_1?.setImageResource(R.drawable.icon_jean)
+
+            }
+            else if(5 <= temperature && temperature < 9){
+                //outer
+                outer_text_1?.text = "코트"
+                outer_image_1?.setImageResource(R.drawable.icon_coat)
+                outer_text_2?.text = "가죽자켓"
+                outer_image_2?.setImageResource(R.drawable.icon_leather_jacket)
+
+                //top
+                top_text_1?.text = "니트"
+                top_image_1?.setImageResource(R.drawable.icon_knit_wear)
+                top_text_2?.text = "후드"
+                top_image_2?.setImageResource(R.drawable.icon_hoodie)
+
+                //bottom
+                bottom_text_1?.text = "청바지"
+                bottom_image_1?.setImageResource(R.drawable.icon_jean)
+
+                //Accessory
+                accessory_text_1?.text = "머플러"
+                accessory_image_1?.setImageResource(R.drawable.icon_muffler)
+            }
+            else{
+                //outer
+                outer_text_1?.text = "코트"
+                outer_image_1?.setImageResource(R.drawable.icon_coat)
+                outer_text_2?.text = "패딩"
+                outer_image_2?.setImageResource(R.drawable.icon_bubble_jacket)
+
+                //top
+                top_text_1?.text = "니트"
+                top_image_1?.setImageResource(R.drawable.icon_knit_wear)
+                top_text_2?.text = "후드"
+                top_image_2?.setImageResource(R.drawable.icon_hoodie)
+
+                //bottom
+                bottom_text_1?.text = "청바지"
+                bottom_image_1?.setImageResource(R.drawable.icon_jean)
+
+                //Accessory
+                accessory_text_1?.text = "머플러"
+                accessory_image_1?.setImageResource(R.drawable.icon_muffler)
+                accessory_text_2?.text = "장갑"
+                accessory_image_2?.setImageResource(R.drawable.icon_gloves)
+
+            }
+            if(rain != ""){
+                if(rain?.toDouble() > 0){
+                    fragC?.findViewById<TextView>(R.id.umbrella_text_1)?.text = "O"
+                }
+                else{
+                    fragC?.findViewById<TextView>(R.id.umbrella_text_1)?.text = "X"
+                }
+            }
+            Log.d("Time", "${base_time.toInt()}")
+            if(base_time.toInt() <= 1800 && base_time.toInt() > 700){
+                //daytime
+                fragC?.findViewById<LinearLayout>(R.id.weather)?.setBackgroundResource(R.drawable.daytime_image)
+                fragC?.findViewById<TextView>(R.id.temperature)?.setTextColor(Color.BLACK)
+                fragC?.findViewById<TextView>(R.id.address)?.setTextColor(Color.BLACK)
+                fragC?.findViewById<TextView>(R.id.wind_direction)?.setTextColor(Color.BLACK)
+                fragC?.findViewById<TextView>(R.id.wind_speed)?.setTextColor(Color.BLACK)
+                fragC?.findViewById<TextView>(R.id.humidity)?.setTextColor(Color.BLACK)
+                fragC?.findViewById<TextView>(R.id.precipitation)?.setTextColor(Color.BLACK)
+            }
+            else{
+                fragC?.findViewById<LinearLayout>(R.id.weather)?.setBackgroundResource(R.drawable.night_image)
+                fragC?.findViewById<TextView>(R.id.temperature)?.setTextColor(Color.WHITE)
+                fragC?.findViewById<TextView>(R.id.address)?.setTextColor(Color.WHITE)
+                fragC?.findViewById<TextView>(R.id.wind_direction)?.setTextColor(Color.WHITE)
+                fragC?.findViewById<TextView>(R.id.wind_speed)?.setTextColor(Color.WHITE)
+                fragC?.findViewById<TextView>(R.id.humidity)?.setTextColor(Color.WHITE)
+                fragC?.findViewById<TextView>(R.id.precipitation)?.setTextColor(Color.WHITE)
+                fragC?.findViewById<ImageView>(R.id.precipitation_image)?.setColorFilter(Color.WHITE)
+                fragC?.findViewById<ImageView>(R.id.wind_direction_image)?.setColorFilter(Color.WHITE)
+                fragC?.findViewById<ImageView>(R.id.wind_speed_image)?.setColorFilter(Color.WHITE)
+                fragC?.findViewById<ImageView>(R.id.humidity_image)?.setColorFilter(Color.WHITE)
+            }
+        }
+        else{
+            Log.d("Error", "Temperature information does not exists")
+        }
+
+    }
+
     fun callweather() {
         val call = ApiObject.retrofitService.GetWeather(data_type, num_of_rows, page_no, base_data, base_time, nx, ny)
         call.enqueue(object : retrofit2.Callback<WEATHER> {
@@ -296,6 +503,7 @@ class CFragment : Fragment(), FragmentLifecycle {
                             windDir.toString()
                     }
                 }
+                getClothes()
             }
 
             override fun onFailure(call: Call<WEATHER>, t: Throwable) {

@@ -128,7 +128,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 Longtitude = location?.longitude.toString()
                 getGeo()
             }
-            if (isGPSEnabled) {
+
+            if (isGPSEnabled || isNetworkEnabled) {
                 println("Gps is Enabled")
                 if(locationManager != null) {
                     try {
@@ -138,6 +139,11 @@ class MainActivity : AppCompatActivity(), LocationListener {
                             0f,
                             this
                         )
+                        locationManager.requestLocationUpdates(
+                                LocationManager.NETWORK_PROVIDER,
+                        0,
+                        0f,
+                        this)
                         Log.d("Success", "RequestLocationUpdates Success")
                     }
                     catch (e : Exception){
