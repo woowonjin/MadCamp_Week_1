@@ -67,7 +67,7 @@ var wind: String = ""
 var humi: String = ""
 var winddriec: String = ""
 var rainform: String = ""
-var address = String()
+var address: String = ""
 
 
 data class WEATHER (
@@ -137,41 +137,40 @@ class CFragment : Fragment(), FragmentLifecycle {
         val root = inflater.inflate(R.layout.fragment_c, container, false)
         fragC = root
 
-        Log.d("tab","resumeC")
-        getCurrentDate()
-        getCurrentPosition()
-        if(lat == "" || lng == ""){
-            Toast.makeText(this.requireContext(), "gps is null", Toast.LENGTH_SHORT).show()
-//            onResumeFragment()
-        }
-        else{
-            Toast.makeText(this.requireContext(), "gps is Ok", Toast.LENGTH_SHORT).show()
-            println("date is $base_data")
-            println("time is $base_time")
-            println("Address is $address")
-            var grid: LatXLngY?
-
-            if (!(lat == "") && !(lng == "")) {
-                grid = convertGRID_GPS(TO_GRID, lat.toDouble(), lng.toDouble())
-            }
-            else{
-                grid = null
-                Log.d("error","retry load lat and lng")
-            }
-            nx = grid?.x?.toInt().toString()
-            ny = grid?.y?.toInt().toString()
-            println("$nx, $ny")
-            callweather()
-
-            //초기화
-            //Address
-            var addrText = fragC?.findViewById<TextView>(R.id.address)
-            while(address == "") {
-                addrText?.text = address
-            }
-            addrText?.text = address
-            //Temperature
-        }
+//        Log.d("tab","resumeC")
+//        getCurrentDate()
+//        getCurrentPosition()
+//        if(lat == "" || lng == "" || address==" "){
+//            Toast.makeText(this.requireContext(), "gps is null", Toast.LENGTH_SHORT).show()
+//            var count = 0
+//            while((lat == "" || lng == "" || address == " ") && count < 1000){
+//                sleep(1)
+//                count++
+////                getCurrentPosition()
+//                println(count)
+//            }
+//        }
+//        var addrText = fragC?.findViewById<TextView>(R.id.address)
+//        addrText?.text = address
+////        Toast.makeText(this.requireContext(), "gps is Ok", Toast.LENGTH_SHORT).show()
+//        println("date is $base_data")
+//        println("time is $base_time")
+//        println("Address is $address")
+//        var grid: LatXLngY?
+//        if (!(lat == "") && !(lng == "")) {
+//            grid = convertGRID_GPS(TO_GRID, lat.toDouble(), lng.toDouble())
+//        }
+//        else{
+//            grid = null
+//            Log.d("error","retry load lat and lng")
+//        }
+//        nx = grid?.x?.toInt().toString()
+//        ny = grid?.y?.toInt().toString()
+//        println("$nx, $ny")
+//        callweather()
+//        //초기화
+//        //Address
+//        //Temperature
 
 
         return root
@@ -226,12 +225,31 @@ class CFragment : Fragment(), FragmentLifecycle {
         base_time = currentTime
     }
 
+    fun getPosition(){
+        val act = activity as MainActivity
+        lat = act.getLat()
+        lng = act.getLng()
+        address = act.getAddress()
+        println("Latitude : $lat")
+        println("Longtitude : $lng")
+        println("Address : $address")
+    }
+
     fun getCurrentPosition(){
         val act = activity as MainActivity
         act.getLocation()
         lat = act.getLat()
         lng = act.getLng()
         address = act.getAddress()
+        var count = 0
+//        while((lat == "" || lng == "" || address == " ") && count < 1000){
+//            sleep(1)
+//            count++
+//            lat = act.getLat()
+//            lng = act.getLng()
+//            address = act.getAddress()
+//            println(count)
+//        }
         println("Latitude : $lat")
         println("Longtitude : $lng")
         println("Address : $address")
@@ -570,16 +588,19 @@ class CFragment : Fragment(), FragmentLifecycle {
         Log.d("tab","resumeC")
         getCurrentDate()
         getCurrentPosition()
-        if(lat == "" || lng == "" || address==""){
-            Toast.makeText(this.requireContext(), "gps is null", Toast.LENGTH_SHORT).show()
+        if(lat == "" || lng == "" || address==" "){
+//            Toast.makeText(this.requireContext(), "gps is null", Toast.LENGTH_SHORT).show()
             var count = 0
-            while((lat == "" || lng == "" || address == "") && count < 1000){
+            while((lat == "" || lng == "" || address == " ") && count < 1000){
                 sleep(1)
                 count++
+                println(count)
             }
         }
-
-        Toast.makeText(this.requireContext(), "gps is Ok", Toast.LENGTH_SHORT).show()
+        //Address
+        var addrText = fragC?.findViewById<TextView>(R.id.address)
+        addrText?.text = address
+//        Toast.makeText(this.requireContext(), "gps is Ok", Toast.LENGTH_SHORT).show()
         println("date is $base_data")
         println("time is $base_time")
         println("Address is $address")
@@ -596,12 +617,7 @@ class CFragment : Fragment(), FragmentLifecycle {
         println("$nx, $ny")
         callweather()
         //초기화
-        //Address
-        var addrText = fragC?.findViewById<TextView>(R.id.address)
-        while(address == "") {
-            addrText?.text = address
-        }
-        addrText?.text = address
+
         //Temperature
     }
 

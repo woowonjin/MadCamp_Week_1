@@ -25,13 +25,13 @@ import java.util.*
 class MainActivity : AppCompatActivity(), LocationListener {
     lateinit var locationManager: LocationManager
     private val locationPermissionCode = 2
-    var Latitude = "37.532600"
-    var Longtitude = "127.024612"
+    var Latitude = ""//"37.532600"
+    var Longtitude = ""//"127.024612"
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
     var location : Location? = null
     var mGeocoder : Geocoder? = null
-    var state = String()
-    var city = String()
+    var state: String = ""//"대전광역시"
+    var city: String = ""//"유성구"
 
     ///GESTURE
     private val OnTouchListener= ArrayList<MyOnTouchListener>()
@@ -149,6 +149,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             if(location == null){
                 Log.d("Error", "LastKnownLocation is null")
+                Latitude = "37.532600"
+                Longtitude = "127.024612"
+//                state = "서울특별시"
+//                city = "영등포구"
             }
             else {
                 Latitude = location?.latitude.toString()
@@ -190,6 +194,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
     override fun onLocationChanged(location: Location) {
         println("onLocationChaged !!")
+        println("Latitude = $Latitude")
+        println("Longitude = $Longtitude")
         Latitude = location.latitude.toString()
         Longtitude = location.longitude.toString()
         getGeo()

@@ -283,7 +283,7 @@ class BFragment : Fragment(), FragmentLifecycle, CellClickListner {
 
     override fun onCellClickListner(currentposition: Int, photolist: ArrayList<GridItem>) {
         // What to do when cell clicked
-        Toast.makeText(requireContext(),"Cell clicked", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(requireContext(),"Cell clicked", Toast.LENGTH_SHORT).show()
 //        photoposition = currentposition
 //        photoArray = photolist
 
