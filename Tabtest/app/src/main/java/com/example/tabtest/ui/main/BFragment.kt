@@ -28,6 +28,9 @@ class BFragment : Fragment(), FragmentLifecycle, CellClickListner {
     var gestureDetector: ScaleGestureDetector? = null
     var GridItemCount = 3
     var scaleFactor: Float = 1F
+    var TouchCount = 0
+    var tempScale = 100
+    var currentScale = 100
 
     private val OPEN_GALLERY = 1
     var imageList : ArrayList<GridItem> = ArrayList<GridItem>()
@@ -45,11 +48,11 @@ class BFragment : Fragment(), FragmentLifecycle, CellClickListner {
         }
 
         //// GESTURE START
-
         (activity as MainActivity).registerMyOnTouchListener(object : MainActivity.MyOnTouchListener{
             override fun OnTouch(ev: MotionEvent?) {
-                println("Touch")
+                println("my on Touch")
                 scaleFactor = 1F
+                TouchCount = 0
                 gestureDetector?.onTouchEvent(ev)
 
             }
@@ -63,16 +66,74 @@ class BFragment : Fragment(), FragmentLifecycle, CellClickListner {
 //                scaleFactor = ((scaleFactor * 100) as Int).toFloat() / 100 // Change precision to help with jitter when user just rests their fingers //
                 scaleFactor = scaleFactor*100
 
-                if (scaleFactor > 300){
-                    if (GridItemCount == 5) {
-                        GridItemCount = 3
+                var add = false
+                var minus = false
+                if(99.5 < scaleFactor && scaleFactor < 100.5){
+                    tempScale = 100
+                    currentScale = 100
+                }
+                else if(scaleFactor <= 90 && scaleFactor > 70){
+                    //add
+                    tempScale = 80
+                }
+                else if(scaleFactor <= 70 && scaleFactor > 40){
+                    //add
+                    tempScale = 60
+                }
+                else if(scaleFactor <= 40){
+                    //add
+                    tempScale = 40
+                }
+                else if(scaleFactor >= 110 && scaleFactor < 130){
+                    //minus
+                    tempScale = 120
+                }
+                else if(scaleFactor >= 130 && scaleFactor < 160){
+                    //minus
+                    tempScale = 140
+                }
+                else if(scaleFactor >= 160){
+                    //minus
+                    tempScale = 160
+
+                }
+
+                println("currentScale is $currentScale")
+                println("tempScale is $tempScale")
+                if((tempScale == 40 || tempScale == 80 || tempScale == 60) && currentScale > tempScale){
+                    Log.d("Add image", "Add image")
+                    currentScale = tempScale
+                    add = true
+                }
+                else if((tempScale == 120 || tempScale == 140 || tempScale == 160) && currentScale < tempScale){
+                    Log.d("minus image", "minus image")
+                    currentScale = tempScale
+                    minus = true
+                }
+
+                if(add){
+                    if(GridItemCount <= 5) {
+                        GridItemCount = GridItemCount + 2
+                    }
+                    else{
+                        tempScale = 100
+                        currentScale = 100
                     }
                 }
-                else if (scaleFactor < 40){
-                    if (GridItemCount == 3){
-                        GridItemCount = 5
+                else if(minus){
+                    if(GridItemCount >= 3){
+                        GridItemCount = GridItemCount - 2
+                    }
+                    else{
+                        tempScale = 100
+                        currentScale = 100
                     }
                 }
+
+
+
+
+
 
                 view.findViewById<RecyclerView>(R.id.recycler_view_grid).apply{
                     this.adapter = mAdapter
@@ -80,7 +141,7 @@ class BFragment : Fragment(), FragmentLifecycle, CellClickListner {
                 }
 
 
-                println(scaleFactor)
+                println("Scale factor is : " + scaleFactor)
 
                 return super.onScale(detector)
             }
@@ -184,7 +245,6 @@ class BFragment : Fragment(), FragmentLifecycle, CellClickListner {
 
                         }
                     }
-                    Log.d("Success", "Add Image Success")
 //                    mAdapter.addItem(GridItem(mAdapter.itemCount, bitmap))
                     isIn = false
                     for(s in mAdapter.dataList){
@@ -243,8 +303,6 @@ class BFragment : Fragment(), FragmentLifecycle, CellClickListner {
 
 //    fun sendcurrentpostion(): Int {
 //        return photoposition
-//    }
-
-
+//
 
 }
